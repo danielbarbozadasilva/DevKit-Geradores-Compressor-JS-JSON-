@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Geradores DevKit Brasil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <style>
+    :root {
+      --bg-light: #f8f9fa;
+      --bg-dark: #1b1f24;
+      --bg-content-light: #ffffff;
+      --bg-content-dark: #2a2f35;
+      --bg-siderail-light: #e9ecef;
+      --bg-siderail-dark: #30363d;
+      --text-color-light: #212529;
+      --text-color-dark: #c9d1d9;
+      --text-muted-light: #6c757d;
+      --text-muted-dark: #8b949e;
+      --primary-color: #0d6efd;
+      --primary-hover: #0b5ed7;
+      --border-color-light: #dee2e6;
+      --border-color-dark: #444c56;
+      --input-bg-light: #fff;
+      --input-bg-dark: #0d1117;
+      --input-border-light: #ced4da;
+      --input-border-dark: #444c56;
+      --input-focus-border: #86b7fe;
+      --input-focus-shadow: rgba(13, 110, 253, 0.25);
+      --code-bg-light: #f1f3f5;
+      --code-bg-dark: #21262d;
+      --font-family: 'Nunito', sans-serif;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --sidebar-width: 260px;
+      --sidebar-width-collapsed: 60px;
+    }
+
+    [data-theme="light"] {
+      --bg-light: #f8f9fa;
+      --bg-content: var(--bg-content-light);
+      --bg-siderail: var(--bg-siderail-light);
+      --text-color: var(--text-color-light);
+      --text-muted: var(--text-muted-light);
+      --border-color: var(--border-color-light);
+      --input-bg: var(--input-bg-light);
+      --input-border: var(--input-border-light);
+      --code-bg: var(--code-bg-light);
+    }
+
+    [data-theme="dark"] {
+      --bg-light: var(--bg-dark);
+      --bg-content: var(--bg-content-dark);
+      --bg-siderail: var(--bg-siderail-dark);
+      --text-color: var(--text-color-dark);
+      --text-muted: var(--text-muted-dark);
+      --border-color: var(--border-color-dark);
+      --input-bg: var(--input-bg-dark);
+      --input-border: var(--input-border-dark);
+      --code-bg: var(--code-bg-dark);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-light);
+      color: var(--text-color);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .app-container {
+      display: flex;
+      width: 100%;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-siderail);
+      border-right: 1px solid var(--border-color);
+      padding-top: 15px;
+      height: 100vh;
+      overflow-y: auto;
+      position: fixed;
+      top: 0;
+      left: 0;
+      transition: width 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar h2 {
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      padding: 10px 20px;
+      margin-bottom: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+    }
+
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      color: #495057;
+      text-decoration: none;
+      font-size: 0.98rem;
+      transition: background-color 0.2s, color 0.2s, border-left-color 0.2s, padding-left 0.2s;
+      border-left: 4px solid transparent;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .sidebar nav a .link-text {
+      margin-left: 12px;
+    }
+
+    .sidebar nav a:hover {
+      background-color: #dee2e6;
+      color: var(--primary-hover);
+      border-left-color: #adb5bd;
+    }
+
+    .sidebar nav a.active {
+      background-color: rgba(13, 110, 253, 0.1);
+      color: var(--primary-color);
+      font-weight: 600;
+      border-left-color: var(--primary-color);
+      padding-left: 16px;
+    }
+
+    .content-area {
+      flex-grow: 1;
+      padding: 35px 45px;
+      margin-left: var(--sidebar-width);
+      transition: margin-left 0.3s ease;
+      background-color: var(--bg-content);
+    }
+
+    .tool-section {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .tool-section.active {
+      display: block;
+    }
+
+    .tool-section h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .description {
+      background-color: #f1f3f5;
+      padding: 15px 20px;
+      border-radius: 5px;
+      margin-bottom: 25px;
+      border-left: 4px solid var(--primary-color);
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      transition: background-color 0.3s;
+    }
+
+    [data-theme="dark"] .description {
+      background-color: #2b3137;
+    }
+
+    .description p {
+      margin-bottom: 10px;
+    }
+
+    .description p:last-child {
+      margin-bottom: 0;
+    }
+
+    .description code {
+      background-color: #d1e7fd;
+      color: #0a58ca;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.9em;
+    }
+
+    .description strong {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    .disclaimer {
+      margin: 25px 0;
+      padding: 15px 20px;
+      font-size: 0.9rem;
+      color: #856404;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-left-width: 4px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    [data-theme="dark"] .disclaimer {
+      background-color: #343b41;
+      color: #ffc107;
+      border-color: #444c56;
+    }
+
+    .disclaimer strong {
+      color: #664d03;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="password"],
+    .form-group input[type="email"],
+    .form-group input[type="url"],
+    .form-group input[type="date"],
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: var(--font-family);
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--input-focus-border);
+      box-shadow: 0 0 0 4px var(--input-focus-shadow);
+    }
+
+    .form-group textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .form-group .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 5px;
+    }
+
+    .form-group .checkbox-label input {
+      margin-right: 8px;
+      width: auto;
+    }
+
+    .button {
+      padding: 12px 25px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+      display: inline-block;
+      margin-top: 5px;
+      margin-right: 10px;
+      box-shadow: 0 2px 5px rgba(13, 110, 253, 0.2);
+    }
+
+    .button:hover {
+      background-color: var(--primary-hover);
+      box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 3px rgba(13, 110, 253, 0.2);
+    }
+
+    .button.secondary {
+      background-color: var(--text-muted);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .button.secondary:hover {
+      background-color: #5a6268;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .button.secondary:active {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .output-area {
+      margin-top: 25px;
+      background-color: var(--code-bg);
+      border: 1px solid var(--border-color);
+      padding: 18px 22px;
+      border-radius: 6px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      min-height: 50px;
+      color: #333;
+      line-height: 1.5;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+      transition: background-color 0.3s;
+    }
+
+    [data-theme="dark"] .output-area {
+      background-color: #21262d;
+      color: #c9d1d9;
+      border-color: #444c56;
+    }
+
+    .output-area.large {
+      min-height: 150px;
+    }
+
+    .output-area.success {
+      border-left: 4px solid #198754;
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .output-area.error {
+      border-left: 4px solid #dc3545;
+      background-color: #f8d7da;
+      color: #842029;
+    }
+
+    .output-area.warning {
+      border-left: 4px solid #ffc107;
+      background-color: #fff3cd;
+      color: #664d03;
+    }
+
+    .minifier-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .minifier-column {
+      width: 48%;
+    }
+
+    .minifier-column label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+
+    .minifier-column textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: Consolas, Monaco, monospace;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      min-height: 300px;
+      resize: vertical;
+    }
+
+    .minifier-column textarea:focus {
+      outline: none;
+      border-color: var(--input-focus-border);
+      box-shadow: 0 0 0 4px var(--input-focus-shadow);
+    }
+
+    @media(max-width:992px) {
+      .sidebar {
+        width: var(--sidebar-width-collapsed);
+      }
+
+      .sidebar:hover {
+        width: var(--sidebar-width);
+      }
+
+      .sidebar h2,
+      .sidebar nav a .link-text {
+        opacity: 0;
+        transition: opacity 0.1s ease;
+      }
+
+      .sidebar:hover h2,
+      .sidebar:hover nav a .link-text {
+        opacity: 1;
+      }
+
+      .sidebar h2 {
+        text-align: center;
+        padding: 10px 5px;
+      }
+
+      .sidebar:hover h2 {
+        text-align: center;
+        padding: 10px 20px;
+      }
+
+      .sidebar nav a {
+        justify-content: center;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .sidebar:hover nav a {
+        justify-content: flex-start;
+        padding-left: 20px;
+      }
+
+      .content-area {
+        margin-left: var(--sidebar-width-collapsed);
+      }
+
+      .minifier-container {
+        flex-direction: column;
+      }
+
+      .minifier-column {
+        width: 100%;
+      }
+    }
+
+    @media(max-width:576px) {
+      .content-area {
+        padding: 25px 15px;
+        margin-left: 0;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        overflow-y: hidden;
+      }
+
+      .sidebar h2 {
+        text-align: center;
+        opacity: 1;
+      }
+
+      .sidebar nav {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .sidebar nav ul {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+      .sidebar nav li {
+        flex-shrink: 0;
+      }
+
+      .sidebar nav a {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        justify-content: center;
+        padding: 10px 15px;
+      }
+
+      .sidebar nav a .link-text {
+        opacity: 1;
+        display: inline;
+      }
+
+      .sidebar nav a.active {
+        border-left: none;
+        border-bottom-color: var(--primary-color);
+        background-color: transparent;
+      }
+
+      .tool-section h3 {
+        font-size: 1.7rem;
+      }
+
+      .button {
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body data-theme="light">
+  <div class="app-container">
+    <aside class="sidebar">
+      <h2>DevKit Geradores</h2>
+      <nav id="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#modo-dark" data-tool="modo-dark">
+              <span class="link-text">Modo Dark</span>
+            </a>
+          </li>
+          <li>
+            <a href="#disparar-alarme" data-tool="disparar-alarme">
+              <span class="link-text">Disparar Alarme</span>
+            </a>
+          </li>
+          <li><a href="#gerador-cnh" data-tool="gerador-cnh"><span class="link-text">CNH</span></a></li>
+          <li><a href="#gerador-conta-bancaria" data-tool="gerador-conta-bancaria"><span class="link-text">Conta
+                Bancária</span></a></li>
+          <li><a href="#gerador-cpf" data-tool="gerador-cpf"><span class="link-text">CPF</span></a></li>
+          <li><a href="#gerador-nicks" data-tool="gerador-nicks"><span class="link-text">Nicks</span></a></li>
+          <li><a href="#gerador-nome" data-tool="gerador-nome"><span class="link-text">Nome</span></a></li>
+          <li><a href="#gerador-data-nascimento" data-tool="gerador-data-nascimento"><span class="link-text">Data de
+                Nascimento</span></a></li>
+          <li><a href="#gerador-numeros-aleatorios" data-tool="gerador-numeros-aleatorios"><span
+                class="link-text">Números Aleatórios</span></a></li>
+          <li><a href="#gerador-pis-pasep" data-tool="gerador-pis-pasep"><span class="link-text">PIS/PASEP</span></a>
+          </li>
+          <li><a href="#gerador-cnpj" data-tool="gerador-cnpj"><span class="link-text">CNPJ</span></a></li>
+          <li><a href="#gerador-cep" data-tool="gerador-cep"><span class="link-text">CEP</span></a></li>
+          <li><a href="#gerador-rg" data-tool="gerador-rg"><span class="link-text">RG</span></a></li>
+          <li><a href="#gerador-inscricao-estadual" data-tool="gerador-inscricao-estadual"><span
+                class="link-text">Inscrição Estadual</span></a></li>
+          <li><a href="#gerador-titulo-eleitor" data-tool="gerador-titulo-eleitor"><span class="link-text">Título de
+                Eleitor</span></a></li>
+          <li><a href="#gerador-senha" data-tool="gerador-senha"><span class="link-text">Senha</span></a></li>
+          <li><a href="#gerador-pdf" data-tool="gerador-pdf"><span class="link-text">Gerador PDF Simples</span></a></li>
+          <li><a href="#minificador-codigo" data-tool="minificador-codigo"><span class="link-text">Minificador
+                Código</span></a></li>
+          <li><a href="#desmimificar-codigo" data-tool="desmimificar-codigo"><span class="link-text">Desmimificar
+                Código</span></a></li>
+          <li><a href="#anotacoes" data-tool="anotacoes"><span class="link-text">Anotações</span></a></li>
+          <li><a href="#sobre-nos" data-tool="sobre-nos"><span class="link-text">Sobre Nós</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content-area">
+      <div class="tool-section active" id="welcome">
+        <h3>Geradores DevKit Brasil</h3>
+        <p class="description">
+          Ferramentas para gerar dados formatados e utilitários para testes e desenvolvimento.
+          Selecione uma opção no menu lateral.
+        </p>
+        <div class="disclaimer">
+          <strong>Atenção:</strong> Geradores de documentos (CNH, CPF, CNPJ, PIS, RG, IE, Título) criam números com
+          formato válido, mas <strong>matematicamente inválidos</strong>. Use-os exclusivamente para testes. O uso
+          indevido é de sua inteira responsabilidade.
+        </div>
+      </div>
+
+      <div class="tool-section" id="modo-dark">
+        <h3>Alternar Modo Dark</h3>
+        <div class="description">
+          <p>Ative ou desative o tema escuro para uma experiência visual diferenciada.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="dark-toggle" />
+              Habilitar Modo Escuro
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="disparar-alarme">
+        <h3>Disparar Alarme</h3>
+        <div class="description">
+          <p>Defina até 5 alarmes. Cada alarme contém um horário e uma mensagem. Quando o horário for atingido, um
+            alerta será exibido.</p>
+        </div>
+        <div class="implementation-area">
+          <div id="alarm-container"></div>
+          <button class="button" id="btn-add-alarm">Adicionar Alarme</button>
+          <div class="output-area" id="alarm-status" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-cnh">
+        <h3>Gerador de CNH</h3>
+        <div class="description">
+          <p>Gera um número de CNH (11 dígitos) formatado, com dados adicionais fictícios.</p>
+          <p><strong>Lógica:</strong> Cria 11 dígitos aleatórios. Datas e categorias são aleatórias.</p>
+          <p><strong>Saída:</strong> Número CNH, Validade Fictícia, Categoria Aleatória.</p>
+        </div>
+        <div class="disclaimer">
+          Número de CNH gerado é inválido. Apenas para testes.
+        </div>
+        <div class="implementation-area">
+          <button class="button" id="btn-gerar-cnh">Gerar CNH</button>
+          <div class="output-area" id="output-cnh"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-conta-bancaria">
+        <h3>Gerador de Conta Bancária</h3>
+        <div class="description">
+          <p>Gera dados fictícios de conta bancária (Banco, Agência, Conta com DV aleatório).</p>
+          <p><strong>Lógica:</strong> Seleciona um banco da lista, gera agência e conta aleatórias, incluindo um dígito
+            verificador aleatório (não calculado).</p>
+          <p><strong>Saída:</strong> Banco, Agência, Conta.</p>
+        </div>
+        <div class="disclaimer">Dados bancários gerados são inválidos. Apenas para testes.</div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="conta-banco-select">Selecionar Banco (Opcional):</label>
+            <select id="conta-banco-select">
+              <option value="">Aleatório</option>
+            </select>
+          </div>
+          <button class="button" id="btn-gerar-conta">Gerar Conta</button>
+          <div class="output-area" id="output-conta"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-cpf">
+        <h3>Gerador de CPF</h3>
+        <div class="description">
+          <p>Gera números de CPF formatados (<code>XXX.XXX.XXX-XX</code>) e <strong>matematicamente inválidos</strong>.
+          </p>
+          <p><strong>Lógica:</strong> Gera 11 dígitos aleatórios e aplica formatação opcional.</p>
+        </div>
+        <div class="disclaimer">Use apenas para testes. CPFs gerados são inválidos.</div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="cpf-formatado" checked />
+              Gerar com pontuação?
+            </label>
+          </div>
+          <button class="button" id="btn-gerar-cpf">Gerar CPF</button>
+          <div class="output-area" id="output-cpf"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-nicks">
+        <h3>Gerador de Nicks</h3>
+        <div class="description">
+          <p>Cria sugestões de Nomes de Usuário (nicks).</p>
+          <p><strong>Lógica:</strong> Combina uma palavra-chave (opcional) com prefixos/sufixos comuns e números
+            aleatórios.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="nick-keyword">Palavra-chave (Opcional):</label>
+            <input type="text" id="nick-keyword" />
+          </div>
+          <div class="form-group">
+            <label for="nick-qtd">Quantidade de Sugestões:</label>
+            <input type="number" id="nick-qtd" value="5" min="1" max="20" />
+          </div>
+          <button class="button" id="btn-gerar-nicks">Gerar Nicks</button>
+          <div class="output-area large" id="output-nicks"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-nome">
+        <h3>Gerador de Nome</h3>
+        <div class="description">
+          <p>Gera nomes e sobrenomes brasileiros fictícios.</p>
+          <p><strong>Lógica:</strong> Combina nomes e sobrenomes de listas pré-definidas.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="nome-genero">Gênero (Opcional):</label>
+            <select id="nome-genero">
+              <option value="aleatorio" selected>Aleatório</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+            </select>
+          </div>
+          <button class="button" id="btn-gerar-nome">Gerar Nome</button>
+          <div class="output-area" id="output-nome"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-data-nascimento">
+        <h3>Gerador de Data de Nascimento</h3>
+        <div class="description">
+          <p>Gera uma data de nascimento aleatória dentro de um intervalo de anos.</p>
+          <p><strong>Lógica:</strong> Escolhe aleatoriamente ano, mês e dia (válido para o mês/ano).</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="nasc-ano-min">Ano Mínimo:</label>
+            <input type="number" id="nasc-ano-min" value="1950" min="1900" max="2024" />
+          </div>
+          <div class="form-group">
+            <label for="nasc-ano-max">Ano Máximo:</label>
+            <input type="number" id="nasc-ano-max" value="2005" min="1901" max="2025" />
+          </div>
+          <button class="button" id="btn-gerar-data-nasc">Gerar Data</button>
+          <div class="output-area" id="output-data-nasc"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-numeros-aleatorios">
+        <h3>Gerador de Números Aleatórios</h3>
+        <div class="description">
+          <p>Gera números inteiros dentro de um intervalo especificado.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="num-min">Mínimo:</label>
+            <input type="number" id="num-min" value="1" />
+          </div>
+          <div class="form-group">
+            <label for="num-max">Máximo:</label>
+            <input type="number" id="num-max" value="100" />
+          </div>
+          <div class="form-group">
+            <label for="num-qtd">Quantidade:</label>
+            <input type="number" id="num-qtd" value="5" min="1" />
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="num-repetir" checked />
+              Permitir Repetição?
+            </label>
+          </div>
+          <button class="button" id="btn-gerar-numeros">Gerar Números</button>
+          <div class="output-area" id="output-numeros"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-pis-pasep">
+        <h3>Gerador de PIS/PASEP</h3>
+        <div class="description">
+          <p>Gera números no formato PIS/PASEP (<code>XXX.XXXXX.XX-X</code>) e <strong>inválidos</strong>.</p>
+          <p><strong>Lógica:</strong> Gera 11 dígitos aleatórios e formata.</p>
+        </div>
+        <div class="disclaimer">
+          Número PIS/PASEP gerado é inválido. Apenas para testes.
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="pis-formatado" checked />
+              Gerar com pontuação?
+            </label>
+          </div>
+          <button class="button" id="btn-gerar-pis">Gerar PIS/PASEP</button>
+          <div class="output-area" id="output-pis"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-cnpj">
+        <h3>Gerador de CNPJ</h3>
+        <div class="description">
+          <p>Gera números de CNPJ formatados (<code>XX.XXX.XXX/YYYY-ZZ</code>) e <strong>inválidos</strong>.</p>
+          <p><strong>Lógica:</strong> Gera 14 dígitos aleatórios e formata.</p>
+        </div>
+        <div class="disclaimer">Use apenas para testes. CNPJs gerados são inválidos.</div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="cnpj-formatado" checked />
+              Gerar com pontuação?
+            </label>
+          </div>
+          <button class="button" id="btn-gerar-cnpj">Gerar CNPJ</button>
+          <div class="output-area" id="output-cnpj"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-cep">
+        <h3>Gerador de CEP</h3>
+        <div class="description">
+          <p>Gera códigos CEP formatados (<code>NNNNN-NNN</code>).</p>
+          <p><strong>Lógica:</strong> Gera 8 números aleatórios e formata. Não garante que o CEP exista.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="cep-formatado" checked />
+              Gerar com pontuação?
+            </label>
+          </div>
+          <button class="button" id="btn-gerar-cep">Gerar CEP</button>
+          <div class="output-area" id="output-cep"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-rg">
+        <h3>Gerador de RG</h3>
+        <div class="description">
+          <p>Gera números de RG formatados e <strong>inválidos</strong> para um estado selecionado (Exemplo: SP).</p>
+          <p><strong>Lógica:</strong> Gera dígitos aleatórios e aplica a máscara do estado. Formato varia muito.</p>
+        </div>
+        <div class="disclaimer">
+          RG gerado é inválido. Formato pode não corresponder a todos os estados.
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="rg-uf">Estado (UF) para Formato:</label>
+            <select id="rg-uf">
+              <option value="SP" selected>São Paulo (SP) - Exemplo</option>
+              <option value="RJ">Rio de Janeiro (RJ) - Exemplo</option>
+              <option value="outro">Outro (Sem formato específico)</option>
+            </select>
+          </div>
+          <button class="button" id="btn-gerar-rg">Gerar RG</button>
+          <div class="output-area" id="output-rg"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-inscricao-estadual">
+        <h3>Gerador Inscrição Estadual (IE)</h3>
+        <div class="description">
+          <p>Gera números de IE formatados e <strong>inválidos</strong> para um estado (Exemplo: SP).</p>
+          <p><strong>Lógica:</strong> Gera dígitos aleatórios e aplica máscara. Regras são complexas e variam por UF.
+          </p>
+        </div>
+        <div class="disclaimer">
+          IE gerada é inválida e apenas para o formato de exemplo (SP).
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="ie-uf">Estado (UF) para Formato:</label>
+            <select id="ie-uf">
+              <option value="SP" selected>São Paulo (SP) - Exemplo</option>
+              <option value="outro">Outro (Sem formato específico)</option>
+            </select>
+          </div>
+          <button class="button" id="btn-gerar-ie">Gerar IE (Exemplo SP)</button>
+          <div class="output-area" id="output-ie"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-titulo-eleitor">
+        <h3>Gerador Título de Eleitor</h3>
+        <div class="description">
+          <p>Gera números de Título de Eleitor formatados (<code>NNNN NNNN NN NN</code>) e <strong>inválidos</strong>.
+          </p>
+          <p><strong>Lógica:</strong> Gera 12 dígitos aleatórios e aplica a formatação.</p>
+        </div>
+        <div class="disclaimer">
+          Título gerado é inválido. Apenas para testes.
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="titulo-formatado" checked />
+              Gerar com espaços?
+            </label>
+          </div>
+          <button class="button" id="btn-gerar-titulo">Gerar Título</button>
+          <div class="output-area" id="output-titulo"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-senha">
+        <h3>Gerador de Senha</h3>
+        <div class="description">
+          <p>Cria senhas aleatórias fortes baseadas em critérios do usuário.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="senha-length">Comprimento:</label>
+            <input type="number" id="senha-length" value="16" min="4" max="128" />
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label"><input type="checkbox" id="senha-upper" checked /> Incluir Maiúsculas
+              (ABC)</label><br />
+            <label class="checkbox-label"><input type="checkbox" id="senha-lower" checked /> Incluir Minúsculas
+              (abc)</label><br />
+            <label class="checkbox-label"><input type="checkbox" id="senha-numbers" checked /> Incluir Números
+              (123)</label><br />
+            <label class="checkbox-label"><input type="checkbox" id="senha-symbols" checked /> Incluir Símbolos
+              (!@#$)</label>
+          </div>
+          <button class="button" id="btn-gerar-senha">Gerar Senha</button>
+          <div class="output-area" id="output-senha" style="font-size:1.1rem;word-break:break-all;"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="gerador-pdf">
+        <h3>Gerador PDF Simples</h3>
+        <div class="description">
+          <p>Cria um arquivo PDF básico contendo o texto fornecido.</p>
+          <p><strong>Lógica:</strong> Utiliza a biblioteca jsPDF para inserir o texto em um documento PDF e o
+            disponibiliza para download com um nome sequencial.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="pdf-text-content">Texto para o PDF:</label>
+            <textarea id="pdf-text-content" rows="10"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="pdf-base-filename">Nome base do arquivo (sem .pdf):</label>
+            <input type="text" id="pdf-base-filename" value="documento" />
+          </div>
+          <button class="button" id="btn-gerar-pdf">Gerar e Baixar PDF</button>
+          <div id="pdf-counter-info" style="font-size:0.85rem;color:var(--text-muted);margin-top:10px;">
+            Próximo arquivo: <span id="pdf-next-count">1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="minificador-codigo">
+        <h3>Minificador de Código (JS/CSS Básico)</h3>
+        <div class="description">
+          <p>Remove comentários e espaços desnecessários de códigos JavaScript ou CSS para reduzir o tamanho.</p>
+          <p><strong>Atenção:</strong> Esta é uma minificação básica. Pode não ser adequada para todos os tipos de
+            código.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="minifier-container">
+            <div class="minifier-column">
+              <label for="minificador-codigo-original">Código Original:</label>
+              <textarea id="minificador-codigo-original"></textarea>
+            </div>
+            <div class="minifier-column">
+              <label for="minificador-codigo-minificado">Código Minificado:</label>
+              <textarea id="minificador-codigo-minificado" readonly></textarea>
+            </div>
+          </div>
+          <button class="button" id="minificador-botao-minificar">Minificar</button>
+          <div class="output-area" id="minificador-output-status" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="desmimificar-codigo">
+        <h3>Desmimificar Código (JS/JSON)</h3>
+        <div class="description">
+          <p>Tenta “desmimificar” código previamente minificado. Se for JSON válido, faz <code>JSON.stringify</code>
+            indentado. Caso contrário, aplica quebras básicas após <code>;</code>,<code>{</code> e <code>}</code>.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="minifier-container">
+            <div class="minifier-column">
+              <label for="desmimificar-codigo-original">Código Minificado:</label>
+              <textarea id="desmimificar-codigo-original"></textarea>
+            </div>
+            <div class="minifier-column">
+              <label for="desmimificar-codigo-output">Código Desmimificado:</label>
+              <textarea id="desmimificar-codigo-output" readonly></textarea>
+            </div>
+          </div>
+          <button class="button" id="botao-desmimificar">Desmimificar</button>
+          <div class="output-area" id="status-desmimificar" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="anotacoes">
+        <h3>Anotações</h3>
+        <div class="description">
+          <p>Crie e salve anotações localmente neste navegador.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="anotacoes-texto">Suas Anotações:</label>
+            <textarea id="anotacoes-texto" rows="8"></textarea>
+          </div>
+          <button class="button" id="btn-salvar-anotacoes">Salvar Anotações</button>
+          <div class="output-area" id="anotacoes-status" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="tool-section" id="sobre-nos">
+        <h3>Sobre Nós</h3>
+        <div class="description">
+          <p>Desenvolvido por Daniel Barboza da Silva</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+    document.addEventListener("DOMContentLoaded", () => {
+      const sidebarNav = document.getElementById("sidebar-nav");
+      const toolSections = document.querySelectorAll(".content-area .tool-section");
+      const contentArea = document.querySelector(".content-area");
+      function showToolSection(toolId) {
+        let foundSection = false;
+        toolSections.forEach(s => s.classList.remove("active"));
+        sidebarNav.querySelectorAll("a").forEach(l => l.classList.remove("active"));
+        const sectionToShow = document.getElementById(toolId);
+        if (sectionToShow) {
+          sectionToShow.classList.add("active");
+          foundSection = true;
+          const linkToActivate = sidebarNav.querySelector(`a[data-tool="${toolId}"]`);
+          if (linkToActivate) linkToActivate.classList.add("active");
+          if (contentArea) {
+            contentArea.scrollTo({ top: 0, behavior: "smooth" });
+          }
+          if (toolId === "gerador-conta-bancaria") { populateBankSelect(); }
+        }
+        if (!foundSection) {
+          const welcomeSection = document.getElementById("welcome");
+          if (welcomeSection) welcomeSection.classList.add("active");
+        }
+      }
+      if (sidebarNav) {
+        sidebarNav.addEventListener("click", event => {
+          const link = event.target.closest("a[data-tool]");
+          if (link) {
+            event.preventDefault();
+            const toolId = link.getAttribute("data-tool");
+            showToolSection(toolId);
+            if (window.history.replaceState) {
+              window.history.replaceState(null, "", "#" + toolId);
+            } else {
+              window.location.hash = "#" + toolId;
+            }
+          }
+        });
+      }
+      const currentHash = window.location.hash.substring(1);
+      if (currentHash && document.getElementById(currentHash)) {
+        showToolSection(currentHash);
+      } else {
+        showToolSection("welcome");
+        if (window.history.replaceState) {
+          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
+      }
+      window.addEventListener("hashchange", () => {
+        const newHash = window.location.hash.substring(1);
+        if (newHash && document.getElementById(newHash)) {
+          showToolSection(newHash);
+        } else {
+          showToolSection("welcome");
+        }
+      });
+
+      const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const getRandomChar = charset => charset.charAt(Math.floor(Math.random() * charset.length));
+      const padZero = (num, length) => String(num).padStart(length, "0");
+
+      const sampleBanks = [
+        { code: "001", name: "Banco do Brasil" },
+        { code: "237", name: "Bradesco" },
+        { code: "341", name: "Itaú Unibanco" },
+        { code: "104", name: "Caixa Econômica Federal" },
+        { code: "033", name: "Santander" },
+        { code: "745", name: "Citibank" },
+        { code: "260", name: "Nu Pagamentos (Nubank)" },
+        { code: "077", name: "Banco Inter" },
+        { code: "336", name: "Banco C6" }
+      ];
+      let banksPopulated = false;
+      function populateBankSelect() {
+        const contaBancoSelect = document.getElementById("conta-banco-select");
+        if (!contaBancoSelect || banksPopulated) return;
+        while (contaBancoSelect.options.length > 1) {
+          contaBancoSelect.remove(1);
+        }
+        sampleBanks.forEach(bank => {
+          const option = document.createElement("option");
+          option.value = bank.code;
+          option.textContent = `${bank.code} - ${bank.name}`;
+          contaBancoSelect.appendChild(option);
+        });
+        banksPopulated = true;
+      }
+
+      /* ---------- CNH ---------- */
+      const btnGerarCnh = document.getElementById("btn-gerar-cnh");
+      const outputCnh = document.getElementById("output-cnh");
+      if (btnGerarCnh && outputCnh) {
+        btnGerarCnh.addEventListener("click", () => {
+          let cnh = "";
+          for (let i = 0; i < 11; i++) cnh += getRandomInt(0, 9);
+          const validYear = new Date().getFullYear() + getRandomInt(2, 7);
+          const validMonth = getRandomInt(1, 12);
+          const validDay = getRandomInt(1, 28);
+          const categories = ["A", "B", "AB", "C", "D", "E", "AC", "AD", "AE"];
+          const category = categories[getRandomInt(0, categories.length - 1)];
+          outputCnh.textContent =
+            `Número CNH (Inválido): ${cnh}\n` +
+            `Validade (Fictícia): ${padZero(validDay, 2)}/${padZero(validMonth, 2)}/${validYear}\n` +
+            `Categoria (Aleatória): ${category}`;
+          outputCnh.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- Conta Bancária ---------- */
+      const btnGerarConta = document.getElementById("btn-gerar-conta");
+      const outputConta = document.getElementById("output-conta");
+      if (btnGerarConta && outputConta) {
+        btnGerarConta.addEventListener("click", () => {
+          const contaBancoSelect = document.getElementById("conta-banco-select");
+          let selectedBankCode = contaBancoSelect.value;
+          let bank;
+          if (selectedBankCode) {
+            bank = sampleBanks.find(b => b.code === selectedBankCode);
+          } else {
+            bank = sampleBanks[getRandomInt(0, sampleBanks.length - 1)];
+          }
+          if (!bank) {
+            bank = { code: "000", name: "Banco Desconhecido" };
+          }
+          const agencia = padZero(getRandomInt(1, 9999), 4);
+          const contaNum = padZero(getRandomInt(1000, 999999), 6);
+          const contaDv = getRandomInt(0, 9);
+          outputConta.textContent =
+            `Banco: ${bank.code} - ${bank.name}\n` +
+            `Agência: ${agencia}\n` +
+            `Conta: ${contaNum}-${contaDv}`;
+          outputConta.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- CPF ---------- */
+      const btnGerarCpf = document.getElementById("btn-gerar-cpf");
+      const outputCpf = document.getElementById("output-cpf");
+      const cpfFormatadoCheck = document.getElementById("cpf-formatado");
+      if (btnGerarCpf && outputCpf && cpfFormatadoCheck) {
+        btnGerarCpf.addEventListener("click", () => {
+          let cpf = "";
+          for (let i = 0; i < 11; i++)cpf += getRandomInt(0, 9);
+          if (cpfFormatadoCheck.checked) {
+            cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+          }
+          outputCpf.textContent = cpf;
+          outputCpf.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- Nicks ---------- */
+      const btnGerarNicks = document.getElementById("btn-gerar-nicks");
+      const outputNicks = document.getElementById("output-nicks");
+      const nickKeywordInput = document.getElementById("nick-keyword");
+      const nickQtdInput = document.getElementById("nick-qtd");
+      const nickPrefixes = ["Shadow", "Night", "Cyber", "Iron", "Dark", "Light", ""];
+      const nickSuffixes = ["Hunter", "Blade", "Warrior", "Mage", "Pro", "King", "Queen", ""];
+      if (btnGerarNicks && outputNicks && nickKeywordInput && nickQtdInput) {
+        btnGerarNicks.addEventListener("click", () => {
+          const keyword = nickKeywordInput.value.trim().replace(/\s+/g, "");
+          const qtd = parseInt(nickQtdInput.value) || 5;
+          if (qtd < 1 || qtd > 50) {
+            outputNicks.textContent = "Quantidade deve ser entre 1 e 50.";
+            outputNicks.classList.add("error");
+            return;
+          }
+          let nicks = new Set();
+          const baseWord = keyword || nickSuffixes[getRandomInt(0, nickSuffixes.length - 2)];
+          while (nicks.size < qtd) {
+            let nick = "";
+            const type = getRandomInt(1, 5);
+            const prefix = nickPrefixes[getRandomInt(0, nickPrefixes.length - 1)];
+            const suffix = nickSuffixes[getRandomInt(0, nickSuffixes.length - 1)];
+            const number = getRandomInt(1, 999);
+            switch (type) {
+              case 1: nick = prefix + baseWord + number; break;
+              case 2: nick = baseWord + suffix + "_" + number; break;
+              case 3: nick = prefix + baseWord + suffix; break;
+              case 4: nick = baseWord.replace(/a/gi, "4").replace(/e/gi, "3").replace(/i/gi, "1").replace(/o/gi, "0") + number; break;
+              case 5: nick = baseWord + getRandomInt(10, 99); break;
+            }
+            if (nick.length > 3 && nick.length < 20) {
+              nicks.add(nick);
+            }
+            if (nicks.size >= qtd * 5 && nicks.size < qtd) break;
+          }
+          outputNicks.textContent = Array.from(nicks).join("\n");
+          outputNicks.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- Nome ---------- */
+      const btnGerarNome = document.getElementById("btn-gerar-nome");
+      const outputNome = document.getElementById("output-nome");
+      const nomeGeneroSelect = document.getElementById("nome-genero");
+      const firstNamesM = ["Arthur", "Heitor", "Miguel", "Davi", "Gabriel", "Pedro", "Lucas", "Matheus", "Bernardo", "Rafael"];
+      const firstNamesF = ["Alice", "Sophia", "Helena", "Laura", "Manuela", "Valentina", "Isabella", "Heloísa", "Maria Luíza", "Mariana"];
+      const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho"];
+      if (btnGerarNome && outputNome && nomeGeneroSelect) {
+        btnGerarNome.addEventListener("click", () => {
+          const genero = nomeGeneroSelect.value;
+          let firstName = "";
+          if (genero === "masculino") {
+            firstName = firstNamesM[getRandomInt(0, firstNamesM.length - 1)];
+          } else if (genero === "feminino") {
+            firstName = firstNamesF[getRandomInt(0, firstNamesF.length - 1)];
+          } else {
+            const allFirstNames = [...firstNamesM, ...firstNamesF];
+            firstName = allFirstNames[getRandomInt(0, allFirstNames.length - 1)];
+          }
+          const lastName1 = lastNames[getRandomInt(0, lastNames.length - 1)];
+          let lastName2 = lastNames[getRandomInt(0, lastNames.length - 1)];
+          while (lastName2 === lastName1) {
+            lastName2 = lastNames[getRandomInt(0, lastNames.length - 1)];
+          }
+          outputNome.textContent = `${firstName} ${lastName1} ${lastName2}`;
+          outputNome.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- Data de Nascimento ---------- */
+      const btnGerarDataNasc = document.getElementById("btn-gerar-data-nasc");
+      const outputDataNasc = document.getElementById("output-data-nasc");
+      const nascAnoMinInput = document.getElementById("nasc-ano-min");
+      const nascAnoMaxInput = document.getElementById("nasc-ano-max");
+      if (btnGerarDataNasc && outputDataNasc && nascAnoMinInput && nascAnoMaxInput) {
+        btnGerarDataNasc.addEventListener("click", () => {
+          const minYear = parseInt(nascAnoMinInput.value) || 1950;
+          const maxYear = parseInt(nascAnoMaxInput.value) || new Date().getFullYear() - 18;
+          outputDataNasc.classList.remove("success", "error", "warning");
+          if (isNaN(minYear) || isNaN(maxYear) || minYear > maxYear || minYear < 1900 || maxYear > new Date().getFullYear()) {
+            outputDataNasc.textContent = "Erro: Intervalo de anos inválido.";
+            outputDataNasc.classList.add("error");
+            return;
+          }
+          const year = getRandomInt(minYear, maxYear);
+          const month = getRandomInt(1, 12);
+          const daysInMonth = new Date(year, month, 0).getDate();
+          const day = getRandomInt(1, daysInMonth);
+          outputDataNasc.textContent = `${padZero(day, 2)}/${padZero(month, 2)}/${year}`;
+        });
+      }
+
+      /* ---------- Números Aleatórios ---------- */
+      const btnGerarNumeros = document.getElementById("btn-gerar-numeros");
+      const outputNumeros = document.getElementById("output-numeros");
+      if (btnGerarNumeros && outputNumeros) {
+        btnGerarNumeros.addEventListener("click", () => {
+          const minInput = document.getElementById("num-min");
+          const maxInput = document.getElementById("num-max");
+          const qtdInput = document.getElementById("num-qtd");
+          const repetirCheck = document.getElementById("num-repetir");
+          const min = parseInt(minInput.value);
+          const max = parseInt(maxInput.value);
+          const qtd = parseInt(qtdInput.value);
+          const repetir = repetirCheck.checked;
+          const numeros = [];
+          outputNumeros.classList.remove("success", "error", "warning");
+          if (isNaN(min) || isNaN(max) || isNaN(qtd)) {
+            outputNumeros.textContent = "Erro: Valores inválidos.";
+            outputNumeros.classList.add("error");
+            return;
+          }
+          if (min > max) {
+            outputNumeros.textContent = "Erro: Mínimo não pode ser maior que Máximo.";
+            outputNumeros.classList.add("error");
+            return;
+          }
+          if (qtd < 1 || qtd > 1000) {
+            outputNumeros.textContent = "Erro: Quantidade deve ser entre 1 e 1000.";
+            outputNumeros.classList.add("error");
+            return;
+          }
+          const rangeSize = max - min + 1;
+          if (!repetir && qtd > rangeSize) {
+            outputNumeros.textContent = `Erro: Impossível gerar ${qtd} números únicos no intervalo de ${rangeSize} números.`;
+            outputNumeros.classList.add("error");
+            return;
+          }
+          if (repetir) {
+            for (let i = 0; i < qtd; i++) {
+              numeros.push(getRandomInt(min, max));
+            }
+          } else {
+            const available = new Set();
+            while (numeros.length < qtd) {
+              const num = getRandomInt(min, max);
+              if (!available.has(num)) {
+                numeros.push(num);
+                available.add(num);
+              }
+              if (available.size >= rangeSize && numeros.length < qtd) break;
+            }
+          }
+          outputNumeros.textContent = numeros.join(", ");
+        });
+      }
+
+      /* ---------- PIS/PASEP ---------- */
+      const btnGerarPis = document.getElementById("btn-gerar-pis");
+      const outputPis = document.getElementById("output-pis");
+      const pisFormatadoCheck = document.getElementById("pis-formatado");
+      if (btnGerarPis && outputPis && pisFormatadoCheck) {
+        btnGerarPis.addEventListener("click", () => {
+          let pis = "";
+          for (let i = 0; i < 11; i++)pis += getRandomInt(0, 9);
+          if (pisFormatadoCheck.checked) {
+            pis = pis.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, "$1.$2.$3-$4");
+          }
+          outputPis.textContent = pis;
+          outputPis.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- CNPJ ---------- */
+      const btnGerarCnpj = document.getElementById("btn-gerar-cnpj");
+      const outputCnpj = document.getElementById("output-cnpj");
+      const cnpjFormatadoCheck = document.getElementById("cnpj-formatado");
+      if (btnGerarCnpj && outputCnpj && cnpjFormatadoCheck) {
+        btnGerarCnpj.addEventListener("click", () => {
+          let cnpj = "";
+          for (let i = 0; i < 14; i++)cnpj += getRandomInt(0, 9);
+          if (cnpjFormatadoCheck.checked) {
+            cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+          }
+          outputCnpj.textContent = cnpj;
+          outputCnpj.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- CEP ---------- */
+      const btnGerarCep = document.getElementById("btn-gerar-cep");
+      const outputCep = document.getElementById("output-cep");
+      const cepFormatadoCheck = document.getElementById("cep-formatado");
+      if (btnGerarCep && outputCep && cepFormatadoCheck) {
+        btnGerarCep.addEventListener("click", () => {
+          let cep = "";
+          for (let i = 0; i < 8; i++)cep += getRandomInt(0, 9);
+          if (cepFormatadoCheck.checked) {
+            cep = cep.replace(/(\d{5})(\d{3})/, "$1-$2");
+          }
+          outputCep.textContent = cep;
+          outputCep.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- RG ---------- */
+      const btnGerarRg = document.getElementById("btn-gerar-rg");
+      const outputRg = document.getElementById("output-rg");
+      const rgUfSelect = document.getElementById("rg-uf");
+      if (btnGerarRg && outputRg && rgUfSelect) {
+        btnGerarRg.addEventListener("click", () => {
+          const uf = rgUfSelect.value;
+          let rg = "";
+          const dv = getRandomInt(0, 9);
+          if (uf === "SP") {
+            for (let i = 0; i < 8; i++)rg += getRandomInt(0, 9);
+            rg = rg.replace(/(\d{2})(\d{3})(\d{3})/, `$1.$2.$3-${dv}`);
+          } else if (uf === "RJ") {
+            for (let i = 0; i < 8; i++)rg += getRandomInt(0, 9);
+            rg = `${rg}-${dv}`;
+          } else {
+            for (let i = 0; i < 9; i++)rg += getRandomInt(0, 9);
+          }
+          outputRg.textContent = rg;
+          outputRg.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- IE ---------- */
+      const btnGerarIe = document.getElementById("btn-gerar-ie");
+      const outputIe = document.getElementById("output-ie");
+      const ieUfSelect = document.getElementById("ie-uf");
+      if (btnGerarIe && outputIe && ieUfSelect) {
+        btnGerarIe.addEventListener("click", () => {
+          const uf = ieUfSelect.value;
+          let ie = "";
+          outputIe.classList.remove("success", "error", "warning");
+          if (uf === "SP") {
+            for (let i = 0; i < 12; i++) ie += getRandomInt(0, 9);
+            ie = ie.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1.$2.$3.$4");
+            outputIe.textContent = ie;
+          } else {
+            ie = "Formato não implementado para esta UF (Exemplo apenas para SP).";
+            outputIe.textContent = ie;
+            outputIe.classList.add("warning");
+          }
+        });
+      }
+
+      /* ---------- Título de Eleitor ---------- */
+      const btnGerarTitulo = document.getElementById("btn-gerar-titulo");
+      const outputTitulo = document.getElementById("output-titulo");
+      const tituloFormatadoCheck = document.getElementById("titulo-formatado");
+      if (btnGerarTitulo && outputTitulo && tituloFormatadoCheck) {
+        btnGerarTitulo.addEventListener("click", () => {
+          let titulo = "";
+          for (let i = 0; i < 12; i++)titulo += getRandomInt(0, 9);
+          if (tituloFormatadoCheck.checked) {
+            titulo = titulo.replace(/(\d{4})(\d{4})(\d{2})(\d{2})/, "$1 $2 $3 $4");
+          }
+          outputTitulo.textContent = titulo;
+          outputTitulo.classList.remove("success", "error", "warning");
+        });
+      }
+
+      /* ---------- Gerador de Senha ---------- */
+      const btnGerarSenha = document.getElementById("btn-gerar-senha");
+      const outputSenha = document.getElementById("output-senha");
+      if (btnGerarSenha && outputSenha) {
+        btnGerarSenha.addEventListener("click", () => {
+          outputSenha.classList.remove("success", "error", "warning");
+          const length = parseInt(document.getElementById("senha-length").value);
+          const includeUpper = document.getElementById("senha-upper").checked;
+          const includeLower = document.getElementById("senha-lower").checked;
+          const includeNumbers = document.getElementById("senha-numbers").checked;
+          const includeSymbols = document.getElementById("senha-symbols").checked;
+          if (isNaN(length) || length < 4 || length > 128) {
+            outputSenha.textContent = "Erro: Comprimento inválido (4-128).";
+            outputSenha.classList.add("error");
+            return;
+          }
+          const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          const lowerChars = "abcdefghijklmnopqrstuvwxyz";
+          const numberChars = "0123456789";
+          const symbolChars = "!@#$%&*()_+-=[]{}|;:,.<>?";
+          let charset = "";
+          let requiredChars = "";
+          if (includeUpper) { charset += upperChars; requiredChars += getRandomChar(upperChars); }
+          if (includeLower) { charset += lowerChars; requiredChars += getRandomChar(lowerChars); }
+          if (includeNumbers) { charset += numberChars; requiredChars += getRandomChar(numberChars); }
+          if (includeSymbols) { charset += symbolChars; requiredChars += getRandomChar(symbolChars); }
+          if (!charset) {
+            outputSenha.textContent = "Erro: Selecione ao menos um tipo de caractere.";
+            outputSenha.classList.add("error");
+            return;
+          }
+          if (requiredChars.length > length) {
+            outputSenha.textContent = "Erro: Comprimento menor que os caracteres requeridos.";
+            outputSenha.classList.add("error");
+            return;
+          }
+          let password = requiredChars;
+          const remainingLength = length - requiredChars.length;
+          for (let i = 0; i < remainingLength; i++) {
+            password += getRandomChar(charset);
+          }
+          password = password.split("").sort(() => 0.5 - Math.random()).join("");
+          outputSenha.textContent = password;
+        });
+      }
+
+      /* ---------- Gerador PDF ---------- */
+      const btnGerarPdf = document.getElementById("btn-gerar-pdf");
+      const pdfTextContent = document.getElementById("pdf-text-content");
+      const pdfBaseFilename = document.getElementById("pdf-base-filename");
+      const pdfNextCountSpan = document.getElementById("pdf-next-count");
+      let pdfFileCounter = 1;
+      if (btnGerarPdf && pdfTextContent && pdfBaseFilename && pdfNextCountSpan) {
+        pdfNextCountSpan.textContent = pdfFileCounter;
+        btnGerarPdf.addEventListener("click", () => {
+          try {
+            if (typeof jsPDF === "undefined") {
+              alert("Erro: Biblioteca jsPDF não carregada.");
+              return;
+            }
+            const doc = new jsPDF();
+            const text = pdfTextContent.value || "Nenhum conteúdo fornecido.";
+            const baseName = (pdfBaseFilename.value.trim() || "documento")
+              .replace(/[^a-zA-Z0-9_\-\.]/g, "_")
+              .replace(/\s+/g, "_");
+            const filename = `${baseName}_${pdfFileCounter}.pdf`;
+            const lines = doc.splitTextToSize(text, 180);
+            doc.text(lines, 10, 10);
+            doc.save(filename);
+            pdfFileCounter++;
+            pdfNextCountSpan.textContent = pdfFileCounter;
+          } catch (error) {
+            console.error("Erro ao gerar PDF:", error);
+            alert(`Ocorreu um erro ao gerar o PDF: ${error.message}`);
+          }
+        });
+      }
+
+      /* ---------- Minificador de Código ---------- */
+      const btnMinificar = document.getElementById("minificador-botao-minificar");
+      const codigoOriginalTextarea = document.getElementById("minificador-codigo-original");
+      const codigoMinificadoTextarea = document.getElementById("minificador-codigo-minificado");
+      const minificadorStatus = document.getElementById("minificador-output-status");
+      function minificarCodigo(codigo) {
+        try {
+          codigo = codigo.replace(/\/\/.*$/gm, "");
+          codigo = codigo.replace(/\/\*[\s\S]*?\*\//g, "");
+          codigo = codigo.replace(/\s+/g, " ");
+          codigo = codigo.replace(/\s*([!%&()*+,\-./:;<=>?@[\\\]^`{|}~])\s*/g, "$1");
+          codigo = codigo.trim();
+          return codigo;
+        } catch (e) {
+          console.error("Erro ao minificar:", e);
+          return "Erro durante a minificação.";
+        }
+      }
+      if (btnMinificar && codigoOriginalTextarea && codigoMinificadoTextarea && minificadorStatus) {
+        btnMinificar.addEventListener("click", () => {
+          const codigoOriginal = codigoOriginalTextarea.value;
+          if (!codigoOriginal.trim()) {
+            codigoMinificadoTextarea.value = "";
+            minificadorStatus.textContent = "Nenhum código para minificar.";
+            minificadorStatus.style.display = "block";
+            minificadorStatus.className = "output-area warning";
+            return;
+          }
+          const codigoMinificadoTexto = minificarCodigo(codigoOriginal);
+          codigoMinificadoTextarea.value = codigoMinificadoTexto;
+          if (codigoMinificadoTexto === "Erro durante a minificação.") {
+            minificadorStatus.textContent = "Ocorreu um erro durante a minificação.";
+            minificadorStatus.style.display = "block";
+            minificadorStatus.className = "output-area error";
+          } else {
+            const originalLength = codigoOriginal.length;
+            const minifiedLength = codigoMinificadoTexto.length;
+            const reduction = originalLength > 0 ? ((1 - minifiedLength / originalLength) * 100).toFixed(1) : 0;
+            minificadorStatus.textContent = `Minificado com sucesso! Redução de ${reduction}%.`;
+            minificadorStatus.style.display = "block";
+            minificadorStatus.className = "output-area success";
+          }
+        });
+      }
+
+      /* ---------- Desmimificar ---------- */
+      const botaoDesmimificar = document.getElementById("botao-desmimificar");
+      const desmimificarOriginal = document.getElementById("desmimificar-codigo-original");
+      const desmimificarOutput = document.getElementById("desmimificar-codigo-output");
+      const desmimificarStatus = document.getElementById("status-desmimificar");
+      function desmimificarCodigo(txt) {
+        try {
+          const parsed = JSON.parse(txt);
+          return JSON.stringify(parsed, null, 2);
+        } catch (e) {
+          let f = txt;
+          f = f.replace(/;/g, ";\n");
+          f = f.replace(/{/g, "{\n");
+          f = f.replace(/}/g, "\n}\n");
+          return f.trim();
+        }
+      }
+      if (botaoDesmimificar && desmimificarOriginal && desmimificarOutput && desmimificarStatus) {
+        botaoDesmimificar.addEventListener("click", () => {
+          desmimificarStatus.style.display = "none";
+          const cod = desmimificarOriginal.value.trim();
+          if (!cod) {
+            desmimificarOutput.value = "";
+            desmimificarStatus.textContent = "Nenhum código para desmimificar.";
+            desmimificarStatus.className = "output-area error";
+            desmimificarStatus.style.display = "block";
+            return;
+          }
+          const result = desmimificarCodigo(cod);
+          desmimificarOutput.value = result;
+          desmimificarStatus.textContent = "Desmimificado com sucesso!";
+          desmimificarStatus.className = "output-area success";
+          desmimificarStatus.style.display = "block";
+        });
+      }
+
+      /* ---------- Anotações ---------- */
+      const anotacoesTexto = document.getElementById("anotacoes-texto");
+      const btnSalvarAnotacoes = document.getElementById("btn-salvar-anotacoes");
+      const anotacoesStatus = document.getElementById("anotacoes-status");
+      if (anotacoesTexto && btnSalvarAnotacoes && anotacoesStatus) {
+        function carregarAnotacoes() {
+          const salvas = localStorage.getItem("anotacoesUsuario");
+          if (salvas) {
+            anotacoesTexto.value = salvas;
+          }
+        }
+        carregarAnotacoes();
+        btnSalvarAnotacoes.addEventListener("click", () => {
+          localStorage.setItem("anotacoesUsuario", anotacoesTexto.value);
+          anotacoesStatus.textContent = "Anotações salvas localmente!";
+          anotacoesStatus.className = "output-area success";
+          anotacoesStatus.style.display = "block";
+        });
+      }
+
+      /* ---------- Modo Dark ---------- */
+      const darkToggle = document.getElementById("dark-toggle");
+      if (darkToggle) {
+        const body = document.body;
+        function loadTheme() {
+          const savedTheme = localStorage.getItem("modoDarkHabilitado");
+          if (savedTheme === "true") {
+            body.setAttribute("data-theme", "dark");
+            darkToggle.checked = true;
+          } else {
+            body.setAttribute("data-theme", "light");
+            darkToggle.checked = false;
+          }
+        }
+        loadTheme();
+        darkToggle.addEventListener("change", () => {
+          if (darkToggle.checked) {
+            body.setAttribute("data-theme", "dark");
+            localStorage.setItem("modoDarkHabilitado", "true");
+          } else {
+            body.setAttribute("data-theme", "light");
+            localStorage.setItem("modoDarkHabilitado", "false");
+          }
+        });
+      }
+
+      /* ---------- Disparar Alarme ---------- */
+      const alarmContainer = document.getElementById("alarm-container");
+      const btnAddAlarm = document.getElementById("btn-add-alarm");
+      const alarmStatus = document.getElementById("alarm-status");
+      let alarms = [];
+      function loadAlarms() {
+        const stored = localStorage.getItem("alarmsUsuario");
+        if (stored) {
+          alarms = JSON.parse(stored);
+        } else {
+          alarms = [];
+        }
+      }
+      function saveAlarms() {
+        localStorage.setItem("alarmsUsuario", JSON.stringify(alarms));
+      }
+      function renderAlarms() {
+        alarmContainer.innerHTML = "";
+        alarms.forEach((alarm, index) => {
+          const wrapper = document.createElement("div");
+          wrapper.style.marginBottom = "10px";
+          const label = document.createElement("label");
+          label.textContent = `Alarme ${index + 1}: `;
+          const timeInput = document.createElement("input");
+          timeInput.type = "time";
+          timeInput.value = alarm.time || "00:00";
+          timeInput.addEventListener("change", (e) => {
+            alarms[index].time = e.target.value;
+            saveAlarms();
+          });
+          const msgInput = document.createElement("input");
+          msgInput.type = "text";
+          msgInput.placeholder = "Mensagem Alarme";
+          msgInput.value = alarm.message || "";
+          msgInput.style.marginLeft = "8px";
+          msgInput.addEventListener("change", (e) => {
+            alarms[index].message = e.target.value;
+            saveAlarms();
+          });
+          const removeBtn = document.createElement("button");
+          removeBtn.textContent = "Remover";
+          removeBtn.className = "button secondary";
+          removeBtn.style.marginLeft = "8px";
+          removeBtn.addEventListener("click", () => {
+            alarms.splice(index, 1);
+            saveAlarms();
+            renderAlarms();
+          });
+          wrapper.appendChild(label);
+          wrapper.appendChild(timeInput);
+          wrapper.appendChild(msgInput);
+          wrapper.appendChild(removeBtn);
+          alarmContainer.appendChild(wrapper);
+        });
+      }
+      if (btnAddAlarm && alarmContainer && alarmStatus) {
+        loadAlarms();
+        renderAlarms();
+        btnAddAlarm.addEventListener("click", () => {
+          if (alarms.length >= 5) {
+            alarmStatus.textContent = "Você já tem 5 alarmes definidos. Remova algum antes de adicionar outro.";
+            alarmStatus.className = "output-area error";
+            alarmStatus.style.display = "block";
+            return;
+          }
+          alarms.push({ time: "00:00", message: "" });
+          saveAlarms();
+          renderAlarms();
+          alarmStatus.textContent = "Alarme adicionado!";
+          alarmStatus.className = "output-area success";
+          alarmStatus.style.display = "block";
+        });
+        setInterval(() => {
+          const now = new Date();
+          const hh = String(now.getHours()).padStart(2, "0");
+          const mm = String(now.getMinutes()).padStart(2, "0");
+          const currentTime = `${hh}:${mm}`;
+          alarms.forEach(alarm => {
+            if (alarm.time === currentTime) {
+              if (!alarm.alreadyFired) {
+                alarm.alreadyFired = true;
+                alert(`Alarme: ${alarm.message || "Sem mensagem"}`);
+              }
+            } else {
+              alarm.alreadyFired = false;
+            }
+          });
+        }, 15000);
+      }
+    });
+  </script>
+</body>
+
+</html>
