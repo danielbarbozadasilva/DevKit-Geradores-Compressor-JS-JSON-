@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minificador de Código</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px;
+      }
+
+      .container {
+        display: flex;
+        justify-content: space-around;
+        width: 90%;
+        margin-bottom: 20px;
+      }
+
+      .textarea-container {
+        width: 48%;
+      }
+
+      textarea {
+        width: 100%;
+        height: 300px;
+        resize: vertical;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      button:hover {
+        background-color: #367c39;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Minificador de Código</h1>
+
+    <div class="container">
+      <div class="textarea-container">
+        <h2>Código Original</h2>
+        <textarea
+          id="codigo-original"
+          placeholder="Cole seu código aqui..."
+        ></textarea>
+      </div>
+
+      <div class="textarea-container">
+        <h2>Código Minificado</h2>
+        <textarea id="codigo-minificado" readonly></textarea>
+      </div>
+    </div>
+
+    <button id="botao-minificar">Minificar</button>
+
+    <script>
+      const botaoMinificar = document.getElementById("botao-minificar");
+      const codigoOriginal = document.getElementById("codigo-original");
+      const codigoMinificado = document.getElementById("codigo-minificado");
+
+      botaoMinificar.addEventListener("click", () => {
+        const codigo = codigoOriginal.value;
+        const codigoMinificadoTexto = minificarCodigo(codigo);
+        codigoMinificado.value = codigoMinificadoTexto;
+      });
+
+      function minificarCodigo(codigo) {
+        codigo = codigo.replace(/\/\/.*$/gm, "");
+        codigo = codigo.replace(/\/\*[\s\S]*?\*\//g, "");
+        codigo = codigo.replace(/\s+/g, " ").trim();
+        codigo = codigo.replace(
+          /\s*([!%&()*+,\-./:;<=>?@[\\\]^_`{|}~])\s*/g,
+          "$1"
+        );
+        return codigo;
+      }
+    </script>
+  </body>
+</html>
