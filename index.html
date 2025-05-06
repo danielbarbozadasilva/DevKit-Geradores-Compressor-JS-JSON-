@@ -582,6 +582,7 @@
       <h2>DevKit</h2>
       <nav id="sidebar-nav">
         <ul>
+          <!-- 1) Compressor JS/JSON -->
           <li>
             <a href="#compressor-js-json" data-tool="compressor-js-json">
               <span class="link-text">Compressor JS/JSON</span>
@@ -593,50 +594,57 @@
               <span class="link-text">Corrigir Encoding JSON</span>
             </a>
           </li>
-
-          <li><a href="#desmimificar-codigo" data-tool="desmimificar-codigo"><span class="link-text">Desmimificar
-            Código</span></a></li>
-
-          <!-- 4) Modo Dark -->
+          <!-- 3) Desmimificar Código -->
+          <li>
+            <a href="#desmimificar-codigo" data-tool="desmimificar-codigo">
+              <span class="link-text">Desmimificar Código</span>
+            </a>
+          </li>
+          <!-- 4) BPMN FIX (NOVO ITEM) -->
+          <li>
+            <a href="#bpmn-fix" data-tool="bpmn-fix">
+              <span class="link-text">BPMN FIX</span>
+            </a>
+          </li>
+          <!-- 5) Modo Dark -->
           <li>
             <a href="#modo-dark" data-tool="modo-dark">
               <span class="link-text">Modo Dark</span>
             </a>
           </li>
-          <!-- 5) CNH -->
+          <!-- 6) CNH -->
           <li><a href="#gerador-cnh" data-tool="gerador-cnh"><span class="link-text">CNH</span></a></li>
-          <!-- 6) Conta Bancária -->
+          <!-- 7) Conta Bancária -->
           <li><a href="#gerador-conta-bancaria" data-tool="gerador-conta-bancaria"><span class="link-text">Conta Bancária</span></a></li>
-          <!-- 7) CPF -->
+          <!-- 8) CPF -->
           <li><a href="#gerador-cpf" data-tool="gerador-cpf"><span class="link-text">CPF</span></a></li>
-          <!-- 8) Nicks -->
+          <!-- 9) Nicks -->
           <li><a href="#gerador-nicks" data-tool="gerador-nicks"><span class="link-text">Nicks</span></a></li>
-          <!-- 9) Nome -->
+          <!-- 10) Nome -->
           <li><a href="#gerador-nome" data-tool="gerador-nome"><span class="link-text">Nome</span></a></li>
-          <!-- 10) Data de Nascimento -->
-          <li><a href="#gerador-data-nascimento" data-tool="gerador-data-nascimento"><span class="link-text">Data de
-                Nascimento</span></a></li>
-          <!-- 11) Números Aleatórios -->
+          <!-- 11) Data de Nascimento -->
+          <li><a href="#gerador-data-nascimento" data-tool="gerador-data-nascimento"><span
+                class="link-text">Data de Nascimento</span></a></li>
+          <!-- 12) Números Aleatórios -->
           <li><a href="#gerador-numeros-aleatorios" data-tool="gerador-numeros-aleatorios"><span
                 class="link-text">Números Aleatórios</span></a></li>
-          <!-- 12) PIS/PASEP -->
-          <li><a href="#gerador-pis-pasep" data-tool="gerador-pis-pasep"><span class="link-text">PIS/PASEP</span></a>
-          </li>
-          <!-- 13) CNPJ -->
+          <!-- 13) PIS/PASEP -->
+          <li><a href="#gerador-pis-pasep" data-tool="gerador-pis-pasep"><span class="link-text">PIS/PASEP</span></a></li>
+          <!-- 14) CNPJ -->
           <li><a href="#gerador-cnpj" data-tool="gerador-cnpj"><span class="link-text">CNPJ</span></a></li>
-          <!-- 14) CEP -->
+          <!-- 15) CEP -->
           <li><a href="#gerador-cep" data-tool="gerador-cep"><span class="link-text">CEP</span></a></li>
-          <!-- 15) RG -->
+          <!-- 16) RG -->
           <li><a href="#gerador-rg" data-tool="gerador-rg"><span class="link-text">RG</span></a></li>
-          <!-- 16) Inscrição Estadual -->
+          <!-- 17) Inscrição Estadual -->
           <li><a href="#gerador-inscricao-estadual" data-tool="gerador-inscricao-estadual"><span
                 class="link-text">Inscrição Estadual</span></a></li>
-          <!-- 17) Título de Eleitor -->
+          <!-- 18) Título de Eleitor -->
           <li><a href="#gerador-titulo-eleitor" data-tool="gerador-titulo-eleitor"><span class="link-text">Título de
                 Eleitor</span></a></li>
-          <!-- 18) Senha -->
+          <!-- 19) Senha -->
           <li><a href="#gerador-senha" data-tool="gerador-senha"><span class="link-text">Senha</span></a></li>
-          <!-- 19) Gerador PDF Simples -->
+          <!-- 20) Gerador PDF Simples -->
           <li><a href="#gerador-pdf" data-tool="gerador-pdf"><span class="link-text">Gerador PDF Simples</span></a></li>
           
           <!-- 21) Anotações -->
@@ -867,13 +875,8 @@
 
             /**
              * Decodifica uma string que contenha partes em UTF-8 e partes em ISO-8859-1.
-             * - Percorre byte a byte: se detectar uma sequência válida de UTF-8 (2-4 bytes),
-             *   converte para o respectivo código Unicode.
-             * - Caso contrário, interpreta o byte sozinho como ISO-8859-1.
-             * - Evita caracteres corrompidos "�" (replacement char).
              */
             function decodeMixedUtf8AndLatin1(str) {
-                // Converte cada charCode (0..65535) em bytes de 0..255
                 const bytes = new Uint8Array(str.length);
                 for (let i = 0; i < str.length; i++) {
                     bytes[i] = str.charCodeAt(i) & 0xFF;
@@ -884,26 +887,21 @@
                 while (i < bytes.length) {
                     const b = bytes[i];
 
-                    // Caso 1: ASCII (0xxxxxxx)
                     if (b < 0x80) {
                         codePoints.push(b);
                         i++;
                     }
-                    // Caso 2: Possível 2-byte (110xxxxx 10xxxxxx)
                     else if ((b & 0xE0) === 0xC0 && i + 1 < bytes.length) {
                         const b1 = bytes[i + 1];
                         if ((b1 & 0xC0) === 0x80) {
-                            // Válido UTF-8 de 2 bytes
                             const cp = ((b & 0x1F) << 6) | (b1 & 0x3F);
                             codePoints.push(cp);
                             i += 2;
                         } else {
-                            // Byte não segue UTF-8 => interpreta b como Latin-1
                             codePoints.push(b);
                             i++;
                         }
                     }
-                    // Caso 3: Possível 3-byte (1110xxxx 10xxxxxx 10xxxxxx)
                     else if ((b & 0xF0) === 0xE0 && i + 2 < bytes.length) {
                         const b1 = bytes[i + 1];
                         const b2 = bytes[i + 2];
@@ -914,12 +912,10 @@
                             codePoints.push(cp);
                             i += 3;
                         } else {
-                            // Não é sequência UTF-8 válida
                             codePoints.push(b);
                             i++;
                         }
                     }
-                    // Caso 4: Possível 4-byte (11110xxx 10xxxxxx 10xxxxxx 10xxxxxx)
                     else if ((b & 0xF8) === 0xF0 && i + 3 < bytes.length) {
                         const b1 = bytes[i + 1];
                         const b2 = bytes[i + 2];
@@ -934,23 +930,18 @@
                             codePoints.push(cp);
                             i += 4;
                         } else {
-                            // Não é sequência UTF-8 válida
                             codePoints.push(b);
                             i++;
                         }
                     }
                     else {
-                        // Não encaixa nas opções de UTF-8 => interpretamos Latin-1
                         codePoints.push(b);
                         i++;
                     }
                 }
 
-                // Transforma esses codepoints em uma string JS (Unicode)
-                // Obs: codePoints podem ser > 255 se vieram de UTF-8 válido (ex: caractere oriental).
                 let result = '';
                 for (const cp of codePoints) {
-                    // Uso de String.fromCodePoint (mais moderno) para suportar CP > 0xFFFF também
                     result += String.fromCodePoint(cp);
                 }
                 return result;
@@ -966,16 +957,13 @@
                 for (let i = 0; i < str.length; i++) {
                     const code = str.codePointAt(i);
 
-                    // Se o codepoint for maior que 0xFFFF, incrementa i extra (p/ codepoints de 4 bytes)
                     if (code > 0xFFFF) {
                         i++;
                     }
 
                     if (code <= 0xFF) {
-                        // Latin-1 válido
                         result.push(String.fromCharCode(code));
                     } else {
-                        // Fora do range: usar \uXXXX
                         let hex = code.toString(16).padStart(4, '0');
                         result.push("\\u" + hex);
                     }
@@ -995,7 +983,6 @@
                 statusMessage.className = 'status-message';
             }
 
-            // Inicializa o statusMessage caso não tenha classes
             if (statusMessage) {
                 statusMessage.classList.add('status-message');
             }
@@ -1003,21 +990,54 @@
         </script>
       </div>
 
-      <!-- 3) Disparar Alarme -->
-      <div class="tool-section" id="disparar-alarme">
-        <h3>Disparar Alarme</h3>
+      <!-- 3) Desmimificar Código -->
+      <div class="tool-section" id="desmimificar-codigo">
+        <h3>Desmimificar Código (JS/JSON)</h3>
         <div class="description">
-          <p>Defina até 5 alarmes. Cada alarme contém um horário e uma mensagem. Quando o horário for atingido, um
-            alerta será exibido.</p>
+          <p>Se for JSON válido, faz <code>JSON.stringify</code>
+            indentado. Caso contrário, aplica quebras básicas após <code>;</code>,<code>{</code> e <code>}</code>.</p>
         </div>
         <div class="implementation-area">
-          <div id="alarm-container"></div>
-          <button class="button" id="btn-add-alarm">Adicionar Alarme</button>
-          <div class="output-area" id="alarm-status" style="display:none;"></div>
+          <div class="minifier-container">
+            <div class="minifier-column">
+              <label for="desmimificar-codigo-original">Código Minificado:</label>
+              <textarea id="desmimificar-codigo-original"></textarea>
+            </div>
+            <div class="minifier-column">
+              <label for="desmimificar-codigo-output">Código Desmimificado:</label>
+              <textarea id="desmimificar-codigo-output" readonly></textarea>
+            </div>
+          </div>
+          <button class="button" id="botao-desmimificar">Desmimificar</button>
+          <div class="output-area" id="status-desmimificar" style="display:none;"></div>
         </div>
       </div>
 
-      <!-- 4) Modo Dark -->
+      <!-- 4) BPMN FIX (NOVO) -->
+      <div class="tool-section" id="bpmn-fix">
+        <h3>BPMN FIX</h3>
+        <div class="description">
+          <p>Insira o código BPMN com problemas e obtenha a versão corrigida. Esta funcionalidade chama o servidor para
+            validar e corrigir o diagrama BPMN, mantendo as extensões Activiti e resolvendo inconsistências.</p>
+        </div>
+        <div class="implementation-area">
+          <div class="form-group">
+            <label for="bpmnFixInput">Código BPMN Quebrado:</label>
+            <textarea id="bpmnFixInput"></textarea>
+          </div>
+
+          <button id="bpmnFixButton" class="button">Corrigir BPMN</button>
+
+          <div class="form-group" style="margin-top:20px;">
+            <label for="bpmnFixOutput">Código BPMN Corrigido:</label>
+            <textarea id="bpmnFixOutput" class="output-area" readonly></textarea>
+          </div>
+
+          <div id="bpmnFixStatus" class="status-message"></div>
+        </div>
+      </div>
+
+      <!-- 5) Modo Dark -->
       <div class="tool-section" id="modo-dark">
         <h3>Alternar Modo Dark</h3>
         <div class="description">
@@ -1033,7 +1053,7 @@
         </div>
       </div>
 
-      <!-- CNH -->
+      <!-- 6) CNH -->
       <div class="tool-section" id="gerador-cnh">
         <h3>Gerador de CNH</h3>
         <div class="description">
@@ -1050,7 +1070,7 @@
         </div>
       </div>
 
-      <!-- Conta Bancária -->
+      <!-- 7) Conta Bancária -->
       <div class="tool-section" id="gerador-conta-bancaria">
         <h3>Gerador de Conta Bancária</h3>
         <div class="description">
@@ -1072,13 +1092,11 @@
         </div>
       </div>
 
-      <!-- CPF -->
+      <!-- 8) CPF -->
       <div class="tool-section" id="gerador-cpf">
         <h3>Gerador de CPF</h3>
         <div class="description">
-          <p>Gera números de CPF formatados (<code>XXX.XXX.XXX-XX</code>) e <strong>matematicamente inválidos</strong>.
-          </p>
-          <p><strong>Lógica:</strong> Gera 11 dígitos aleatórios e aplica formatação opcional.</p>
+          <p>Gera números de CPF formatados (<code>XXX.XXX.XXX-XX</code>) e <strong>matematicamente inválidos</strong>.</p>
         </div>
         <div class="disclaimer">Use apenas para testes. CPFs gerados são inválidos.</div>
         <div class="implementation-area">
@@ -1093,7 +1111,7 @@
         </div>
       </div>
 
-      <!-- Nicks -->
+      <!-- 9) Nicks -->
       <div class="tool-section" id="gerador-nicks">
         <h3>Gerador de Nicks</h3>
         <div class="description">
@@ -1115,7 +1133,7 @@
         </div>
       </div>
 
-      <!-- Nome -->
+      <!-- 10) Nome -->
       <div class="tool-section" id="gerador-nome">
         <h3>Gerador de Nome</h3>
         <div class="description">
@@ -1136,7 +1154,7 @@
         </div>
       </div>
 
-      <!-- Data de Nascimento -->
+      <!-- 11) Data de Nascimento -->
       <div class="tool-section" id="gerador-data-nascimento">
         <h3>Gerador de Data de Nascimento</h3>
         <div class="description">
@@ -1157,7 +1175,7 @@
         </div>
       </div>
 
-      <!-- Números Aleatórios -->
+      <!-- 12) Números Aleatórios -->
       <div class="tool-section" id="gerador-numeros-aleatorios">
         <h3>Gerador de Números Aleatórios</h3>
         <div class="description">
@@ -1187,7 +1205,7 @@
         </div>
       </div>
 
-      <!-- PIS/PASEP -->
+      <!-- 13) PIS/PASEP -->
       <div class="tool-section" id="gerador-pis-pasep">
         <h3>Gerador de PIS/PASEP</h3>
         <div class="description">
@@ -1209,7 +1227,7 @@
         </div>
       </div>
 
-      <!-- CNPJ -->
+      <!-- 14) CNPJ -->
       <div class="tool-section" id="gerador-cnpj">
         <h3>Gerador de CNPJ</h3>
         <div class="description">
@@ -1229,7 +1247,7 @@
         </div>
       </div>
 
-      <!-- CEP -->
+      <!-- 15) CEP -->
       <div class="tool-section" id="gerador-cep">
         <h3>Gerador de CEP</h3>
         <div class="description">
@@ -1248,7 +1266,7 @@
         </div>
       </div>
 
-      <!-- RG -->
+      <!-- 16) RG -->
       <div class="tool-section" id="gerador-rg">
         <h3>Gerador de RG</h3>
         <div class="description">
@@ -1272,7 +1290,7 @@
         </div>
       </div>
 
-      <!-- Inscrição Estadual -->
+      <!-- 17) Inscrição Estadual -->
       <div class="tool-section" id="gerador-inscricao-estadual">
         <h3>Gerador Inscrição Estadual (IE)</h3>
         <div class="description">
@@ -1296,7 +1314,7 @@
         </div>
       </div>
 
-      <!-- Título de Eleitor -->
+      <!-- 18) Título de Eleitor -->
       <div class="tool-section" id="gerador-titulo-eleitor">
         <h3>Gerador Título de Eleitor</h3>
         <div class="description">
@@ -1319,7 +1337,7 @@
         </div>
       </div>
 
-      <!-- Gerador de Senha -->
+      <!-- 19) Senha -->
       <div class="tool-section" id="gerador-senha">
         <h3>Gerador de Senha</h3>
         <div class="description">
@@ -1345,7 +1363,7 @@
         </div>
       </div>
 
-      <!-- Gerador PDF -->
+      <!-- 20) Gerador PDF -->
       <div class="tool-section" id="gerador-pdf">
         <h3>Gerador PDF Simples</h3>
         <div class="description">
@@ -1369,30 +1387,7 @@
         </div>
       </div>
 
-      <!-- Desmimificar Código -->
-      <div class="tool-section" id="desmimificar-codigo">
-        <h3>Desmimificar Código (JS/JSON)</h3>
-        <div class="description">
-          <p>Se for JSON válido, faz <code>JSON.stringify</code>
-            indentado. Caso contrário, aplica quebras básicas após <code>;</code>,<code>{</code> e <code>}</code>.</p>
-        </div>
-        <div class="implementation-area">
-          <div class="minifier-container">
-            <div class="minifier-column">
-              <label for="desmimificar-codigo-original">Código Minificado:</label>
-              <textarea id="desmimificar-codigo-original"></textarea>
-            </div>
-            <div class="minifier-column">
-              <label for="desmimificar-codigo-output">Código Desmimificado:</label>
-              <textarea id="desmimificar-codigo-output" readonly></textarea>
-            </div>
-          </div>
-          <button class="button" id="botao-desmimificar">Desmimificar</button>
-          <div class="output-area" id="status-desmimificar" style="display:none;"></div>
-        </div>
-      </div>
-
-      <!-- Anotações -->
+      <!-- 21) Anotações -->
       <div class="tool-section" id="anotacoes">
         <h3>Anotações</h3>
         <div class="description">
@@ -2043,8 +2038,59 @@
           }
         });
       }
+
+      /* ---------- BPMN FIX ---------- */
+      const bpmnFixButton = document.getElementById("bpmnFixButton");
+      const bpmnFixInput = document.getElementById("bpmnFixInput");
+      const bpmnFixOutput = document.getElementById("bpmnFixOutput");
+      const bpmnFixStatus = document.getElementById("bpmnFixStatus");
+
+      if (bpmnFixButton && bpmnFixInput && bpmnFixOutput && bpmnFixStatus) {
+        bpmnFixButton.addEventListener("click", async () => {
+          const brokenBpmn = bpmnFixInput.value.trim();
+          bpmnFixStatus.textContent = "";
+          bpmnFixStatus.className = "status-message";
+          
+          if (!brokenBpmn) {
+            bpmnFixStatus.textContent = "Nenhum BPMN fornecido.";
+            bpmnFixStatus.classList.add("error", "visible");
+            return;
+          }
+
+          try {
+            const response = await fetch("/validate-correct", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ bpmnXml: brokenBpmn })
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              bpmnFixStatus.textContent = "Falha ao corrigir: " + (errorData.error || response.statusText);
+              bpmnFixStatus.classList.add("error", "visible");
+              return;
+            }
+
+            const result = await response.json();
+            bpmnFixOutput.value = result.correctedXml || "";
+
+            if (!result.issues || result.issues.length === 0) {
+              bpmnFixStatus.textContent = "Nenhum problema detectado ou BPMN já estava válido.";
+              bpmnFixStatus.classList.add("success", "visible");
+            } else {
+              let messages = result.issues
+                .map(iss => `(${iss.type.toUpperCase()}) ${iss.message}`)
+                .join("\n");
+              bpmnFixStatus.textContent = "Correções e avisos:\n\n" + messages;
+              bpmnFixStatus.classList.add("warning", "visible");
+            }
+          } catch (err) {
+            bpmnFixStatus.textContent = "Erro de conexão ou exceção: " + err.message;
+            bpmnFixStatus.classList.add("error", "visible");
+          }
+        });
+      }
     });
-      
   </script>
 </body>
 

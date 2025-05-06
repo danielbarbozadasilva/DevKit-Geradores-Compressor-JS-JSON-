@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+<h1>Conversor de JSON para ISO-8859-1 (misto UTF-8 / Latin-1)</h1>
+
+<label for="inputText">JSON de Entrada (codificação mista):</label><br>
+<textarea id="inputText"></textarea>
+
+<button id="adjustButton">Converter para ISO-8859-1</button>
+
+<h2>JSON de Saída (ISO-8859-1 + escapes se necessário):</h2>
+<textarea id="outputText" readonly></textarea>
+
+<div id="statusMessage" class="status-message"></div>
+
+<script>
+"use strict";
+
+document.addEventListener('DOMContentLoaded', () => {
+    const inputText = document.getElementById('inputText');
+    const outputText = document.getElementById('outputText');
+    const adjustButton = document.getElementById('adjustButton');
+    const statusMessage = document.getElementById('statusMessage');
+
+    adjustButton.addEventListener('click', handleAdjustClick);
+
+    function handleAdjustClick() {
+        clearOutputAndStatus();
+        const rawInput = inputText.value;
+
+        if (!rawInput.trim()) {
+            showStatus('Entrada está vazia. Por favor, cole o JSON misto (UTF-8 e ISO-8859-1).', 'warning');
+            return;
+        }
+
+        // 1) Decodificar do "misto" para Unicode pleno, sem perder info
+        let mixedDecoded;
+        try {
+            mixedDecoded = decodeMixedUtf8AndLatin1(rawInput);
+        } catch (error) {
+            showStatus('Erro inesperado ao tentar decodificar arquivo misto.', 'error');
+            outputText.value = rawInput;
+            return;
+        }
+
+        // 2) Tentar analisar como JSON
+        let finalOutputString = '';
+        let isJsonValid = false;
+        let parseError = null;
+
+        // Placeholders para arrays específicas
+        const condSourcePlaceholder = '__COND_SOURCE_MINIFIED_PLACEHOLDER__';
+        const formSourcePlaceholderPrefix = '__FORM_SOURCE_';
+        const formSourcePlaceholderSuffix = '_PLACEHOLDER__';
+
+        let condSourceReplacement = null;
+        const formSourceReplacements = [];
+
+        try {
+            // Tenta converter a string decodificada para objeto
+            let parsedJson = JSON.parse(mixedDecoded);
+
+            // Se for objeto/array válido
+            if (parsedJson && typeof parsedJson === 'object' && parsedJson !== null) {
+
+                // Se conditionalsSource for array, substituir por placeholder
+                if (Array.isArray(parsedJson.conditionalsSource)) {
+                    const originalValue = parsedJson.conditionalsSource;
+                    const minifiedString = JSON.stringify(originalValue);
+                    const placeholderInString = `"${condSourcePlaceholder}"`;
+                    parsedJson.conditionalsSource = condSourcePlaceholder;
+                    condSourceReplacement = {
+                        placeholderInString,
+                        minifiedString,
+                        originalValue
+                    };
+                }
+
+                // Se forms for array, iterar e substituir formSource
+                if (Array.isArray(parsedJson.forms)) {
+                    parsedJson.forms.forEach((formObject, index) => {
+                        if (formObject && typeof formObject === 'object'
+                            && Array.isArray(formObject.formSource)) {
+
+                            const originalValue = formObject.formSource;
+                            const minifiedString = JSON.stringify(originalValue);
+                            const placeholder = `${formSourcePlaceholderPrefix}${index}${formSourcePlaceholderSuffix}`;
+                            const placeholderInString = `"${placeholder}"`;
+
+                            formObject.formSource = placeholder;
+                            formSourceReplacements.push({
+                                index,
+                                placeholderInString,
+                                minifiedString,
+                                originalValue
+                            });
+                        }
+                    });
+                }
+
+                // Converte para JSON com indentação de 4 espaços
+                finalOutputString = JSON.stringify(parsedJson, null, 4);
+
+                // Substitui placeholders pelos arrays minificados inline
+                if (condSourceReplacement) {
+                    finalOutputString = finalOutputString.replace(
+                        condSourceReplacement.placeholderInString,
+                        condSourceReplacement.minifiedString
+                    );
+                }
+
+                formSourceReplacements.forEach(replacement => {
+                    finalOutputString = finalOutputString.replace(
+                        replacement.placeholderInString,
+                        replacement.minifiedString
+                    );
+                });
+
+                // Restaura para o objeto original (caso queira reutilizar parsedJson)
+                if (condSourceReplacement) {
+                    parsedJson.conditionalsSource = condSourceReplacement.originalValue;
+                }
+
+                formSourceReplacements.forEach(replacement => {
+                    if (parsedJson.forms && parsedJson.forms[replacement.index]) {
+                        parsedJson.forms[replacement.index].formSource = replacement.originalValue;
+                    }
+                });
+
+            } else {
+                // Se não for objeto, mas parseou => string, number, etc.
+                finalOutputString = JSON.stringify(parsedJson, null, 4);
+            }
+
+            isJsonValid = true;
+
+        } catch (error) {
+            // JSON inválido => exibir string decodificada sem parse
+            parseError = error.message;
+            finalOutputString = mixedDecoded;
+            isJsonValid = false;
+        }
+
+        // 3) Converter a saída final para ISO-8859-1 (com escapes \uXXXX quando > 255)
+        finalOutputString = convertToISO8859_1(finalOutputString);
+
+        // 4) Exibir no textarea
+        outputText.value = finalOutputString;
+
+        // Exibir mensagens
+        if (isJsonValid) {
+            let successMsg = 'Arquivo misto decodificado com sucesso! JSON válido gerado. ';
+            successMsg += 'Convertido completamente para ISO-8859-1 (com escapes se necessário).';
+            let formattedParts = [];
+            if (condSourceReplacement) {
+                formattedParts.push('"conditionalsSource" inline');
+            }
+            if (formSourceReplacements.length > 0) {
+                const indices = formSourceReplacements
+                    .map(r => `forms[${r.index}].formSource`)
+                    .join(', ');
+                formattedParts.push(`${indices} inline`);
+            }
+            if (formattedParts.length > 0) {
+                successMsg += ` Partes específicas minificadas (${formattedParts.join('; ')}).`;
+            }
+            showStatus(successMsg, 'success');
+        } else {
+            showStatus(
+                'Decodificação de encoding misto realizada. ' +
+                'Porém, o JSON continua inválido: ' + (parseError || 'erro desconhecido') +
+                '. Exibindo texto ISO-8859-1 resultante mesmo assim.',
+                'error'
+            );
+        }
+    }
+
+    /**
+     * Decodifica uma string que contenha partes em UTF-8 e partes em ISO-8859-1.
+     * - Percorre byte a byte: se detectar uma sequência válida de UTF-8 (2-4 bytes),
+     *   converte para o respectivo código Unicode.
+     * - Caso contrário, interpreta o byte sozinho como ISO-8859-1.
+     * - Evita caracteres corrompidos "�" (replacement char).
+     */
+    function decodeMixedUtf8AndLatin1(str) {
+        // Converte cada charCode (0..65535) em bytes de 0..255
+        const bytes = new Uint8Array(str.length);
+        for (let i = 0; i < str.length; i++) {
+            bytes[i] = str.charCodeAt(i) & 0xFF;
+        }
+
+        const codePoints = [];
+        let i = 0;
+        while (i < bytes.length) {
+            const b = bytes[i];
+
+            // Caso 1: ASCII (0xxxxxxx)
+            if (b < 0x80) {
+                codePoints.push(b);
+                i++;
+            }
+            // Caso 2: Possível 2-byte (110xxxxx 10xxxxxx)
+            else if ((b & 0xE0) === 0xC0 && i + 1 < bytes.length) {
+                const b1 = bytes[i + 1];
+                if ((b1 & 0xC0) === 0x80) {
+                    // Válido UTF-8 de 2 bytes
+                    const cp = ((b & 0x1F) << 6) | (b1 & 0x3F);
+                    codePoints.push(cp);
+                    i += 2;
+                } else {
+                    // Byte não segue UTF-8 => interpreta b como Latin-1
+                    codePoints.push(b);
+                    i++;
+                }
+            }
+            // Caso 3: Possível 3-byte (1110xxxx 10xxxxxx 10xxxxxx)
+            else if ((b & 0xF0) === 0xE0 && i + 2 < bytes.length) {
+                const b1 = bytes[i + 1];
+                const b2 = bytes[i + 2];
+                if (((b1 & 0xC0) === 0x80) && ((b2 & 0xC0) === 0x80)) {
+                    const cp = ((b & 0x0F) << 12) |
+                               ((b1 & 0x3F) << 6) |
+                               (b2 & 0x3F);
+                    codePoints.push(cp);
+                    i += 3;
+                } else {
+                    // Não é sequência UTF-8 válida
+                    codePoints.push(b);
+                    i++;
+                }
+            }
+            // Caso 4: Possível 4-byte (11110xxx 10xxxxxx 10xxxxxx 10xxxxxx)
+            else if ((b & 0xF8) === 0xF0 && i + 3 < bytes.length) {
+                const b1 = bytes[i + 1];
+                const b2 = bytes[i + 2];
+                const b3 = bytes[i + 3];
+                if (((b1 & 0xC0) === 0x80) &&
+                    ((b2 & 0xC0) === 0x80) &&
+                    ((b3 & 0xC0) === 0x80)) {
+                    const cp = ((b & 0x07) << 18) |
+                               ((b1 & 0x3F) << 12) |
+                               ((b2 & 0x3F) << 6) |
+                               (b3 & 0x3F);
+                    codePoints.push(cp);
+                    i += 4;
+                } else {
+                    // Não é sequência UTF-8 válida
+                    codePoints.push(b);
+                    i++;
+                }
+            }
+            else {
+                // Não encaixa nas opções de UTF-8 => interpretamos Latin-1
+                codePoints.push(b);
+                i++;
+            }
+        }
+
+        // Transforma esses codepoints em uma string JS (Unicode)
+        // Obs: codePoints podem ser > 255 se vieram de UTF-8 válido (ex: caractere oriental).
+        let result = '';
+        for (const cp of codePoints) {
+            // Uso de String.fromCodePoint (mais moderno) para suportar CP > 0xFFFF também
+            // Caso não tenha suporte total, poderia segmentar manualmente.
+            result += String.fromCodePoint(cp);
+        }
+        return result;
+    }
+
+    /**
+     * Converte a string para ficar 100% em ISO-8859-1:
+     * - Caracteres <= 255 são mantidos como literais.
+     * - Caracteres acima de 255 são substituídos por \uXXXX.
+     */
+    function convertToISO8859_1(str) {
+        let result = [];
+        for (let i = 0; i < str.length; i++) {
+            const code = str.codePointAt(i);
+
+            // Se o codepoint for maior que 0xFFFF, incrementa i extra (p/ codepoints de 4 bytes)
+            // para não quebrar surrogate pairs
+            if (code > 0xFFFF) {
+                // pular o par substituto
+                i++;
+            }
+
+            if (code <= 0xFF) {
+                // Latin-1 válido
+                result.push(String.fromCharCode(code));
+            } else {
+                // Fora do range: usar \uXXXX
+                let hex = code.toString(16).padStart(4, '0');
+                result.push("\\u" + hex);
+            }
+        }
+        return result.join('');
+    }
+
+    function showStatus(message, type) {
+        statusMessage.textContent = message;
+        statusMessage.className = 'status-message';
+        statusMessage.classList.add(type, 'visible');
+    }
+
+    function clearOutputAndStatus() {
+        outputText.value = '';
+        statusMessage.textContent = '';
+        statusMessage.className = 'status-message';
+    }
+
+    // Inicializa o statusMessage caso não tenha classes
+    if (statusMessage) {
+        statusMessage.classList.add('status-message');
+    }
+});
+</script>
+
+</body>
+</html>

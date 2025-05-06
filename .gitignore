@@ -1,2 +1,5 @@
-index.zip
+dist
+node_modules
+.git
 .vscode
+.env
