@@ -5,63 +5,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>DevKit</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    integrity="sha384-kQTaIhOW1Ud8OG+HGzf5Ew9G4ix73zN7BwU9CqFZMRPN0zH9tX55DdaFSr+sQnLz" crossorigin="anonymous" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Fonte Nunito -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- jsPDF e js-beautify -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"
     referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify.min.js"></script>
+
   <style>
     :root {
+      /* Mantido apenas o "tema claro" */
       --bg-light: #f8f9fa;
-      --bg-dark: #1b1f24;
-      --bg-content-light: #ffffff;
-      --bg-content-dark: #2a2f35;
-      --bg-siderail-light: #e9ecef;
-      --bg-siderail-dark: #30363d;
-      --text-color-light: #212529;
-      --text-color-dark: #c9d1d9;
-      --text-muted-light: #6c757d;
-      --text-muted-dark: #8b949e;
+      --bg-content: #fff;
+      --bg-siderail: #e9ecef;
+
+      --text-color: #212529;
+      --text-muted: #6c757d;
       --primary-color: #0d6efd;
       --primary-hover: #0b5ed7;
-      --border-color-light: #dee2e6;
-      --border-color-dark: #444c56;
-      --input-bg-light: #fff;
-      --input-bg-dark: #0d1117;
-      --input-border-light: #ced4da;
-      --input-border-dark: #444c56;
-      --input-focus-border: #86b7fe;
-      --input-focus-shadow: rgba(13, 110, 253, 0.25);
-      --code-bg-light: #f1f3f5;
-      --code-bg-dark: #21262d;
+      --border-color: #dee2e6;
+      --input-bg: #fff;
+      --input-border: #ced4da;
+      --code-bg: #f1f3f5;
       --font-family: 'Nunito', sans-serif;
       --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       --sidebar-width: 260px;
       --sidebar-width-collapsed: 60px;
-    }
-
-    [data-theme="light"] {
-      --bg-light: #f8f9fa;
-      --bg-content: var(--bg-content-light);
-      --bg-siderail: var(--bg-siderail-light);
-      --text-color: var(--text-color-light);
-      --text-muted: var(--text-muted-light);
-      --border-color: var(--border-color-light);
-      --input-bg: var(--input-bg-light);
-      --input-border: var(--input-border-light);
-      --code-bg: var(--code-bg-light);
-    }
-
-    [data-theme="dark"] {
-      --bg-light: var(--bg-dark);
-      --bg-content: var(--bg-content-dark);
-      --bg-siderail: var(--bg-siderail-dark);
-      --text-color: var(--text-color-dark);
-      --text-muted: var(--text-muted-dark);
-      --border-color: var(--border-color-dark);
-      --input-bg: var(--input-bg-dark);
-      --input-border: var(--input-border-dark);
-      --code-bg: var(--code-bg-dark);
     }
 
     * {
@@ -75,13 +53,14 @@
     }
 
     body {
-      font-family: var(--font-family);
+      font-family: var(--font-family), Arial, sans-serif;
       background-color: var(--bg-light);
       color: var(--text-color);
       line-height: 1.6;
       display: flex;
       min-height: 100vh;
-      transition: background-color 0.3s, color 0.3s;
+      margin: 0;
+      padding: 0;
     }
 
     .app-container {
@@ -99,7 +78,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      transition: width 0.3s ease;
+      transition: width .3s ease;
       z-index: 1000;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     }
@@ -125,8 +104,8 @@
       padding: 10px 20px;
       color: #495057;
       text-decoration: none;
-      font-size: 0.98rem;
-      transition: background-color 0.2s, color 0.2s, border-left-color 0.2s, padding-left 0.2s;
+      font-size: .98rem;
+      transition: background-color .2s, color .2s, border-left-color .2s, padding-left .2s;
       border-left: 4px solid transparent;
       white-space: nowrap;
       overflow: hidden;
@@ -154,14 +133,14 @@
       flex-grow: 1;
       padding: 35px 45px;
       margin-left: var(--sidebar-width);
-      transition: margin-left 0.3s ease;
       background-color: var(--bg-content);
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: margin-left .3s ease;
     }
 
     .tool-section {
       display: none;
-      animation: fadeIn 0.4s ease-out;
+      animation: fadeIn .4s ease-out;
     }
 
     .tool-section.active {
@@ -184,12 +163,8 @@
       margin-bottom: 25px;
       border-left: 4px solid var(--primary-color);
       color: var(--text-muted);
-      font-size: 0.98rem;
-      transition: background-color 0.3s;
-    }
-
-    [data-theme="dark"] .description {
-      background-color: #2b3137;
+      font-size: .98rem;
+      transition: background-color .3s;
     }
 
     .description p {
@@ -206,7 +181,7 @@
       padding: 3px 6px;
       border-radius: 3px;
       font-family: Consolas, Monaco, monospace;
-      font-size: 0.9em;
+      font-size: .9em;
     }
 
     .description strong {
@@ -217,19 +192,12 @@
     .disclaimer {
       margin: 25px 0;
       padding: 15px 20px;
-      font-size: 0.9rem;
+      font-size: .9rem;
       color: #856404;
       background-color: #fff3cd;
       border: 1px solid #ffeeba;
       border-left-width: 4px;
       border-radius: 4px;
-      transition: background-color 0.3s;
-    }
-
-    [data-theme="dark"] .disclaimer {
-      background-color: #343b41;
-      color: #ffc107;
-      border-color: #444c56;
     }
 
     .disclaimer strong {
@@ -245,7 +213,7 @@
       margin-bottom: 8px;
       font-weight: 600;
       color: #495057;
-      font-size: 0.9rem;
+      font-size: .9rem;
     }
 
     .form-group input[type="text"],
@@ -264,15 +232,15 @@
       font-family: var(--font-family);
       background-color: var(--input-bg);
       color: var(--text-color);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color .2s, box-shadow .2s;
     }
 
     .form-group input:focus,
     .form-group textarea:focus,
     .form-group select:focus {
-      outline: none;
-      border-color: var(--input-focus-border);
-      box-shadow: 0 0 0 4px var(--input-focus-shadow);
+      outline: 0;
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
     }
 
     .form-group textarea {
@@ -296,12 +264,12 @@
       padding: 12px 25px;
       background-color: var(--primary-color);
       color: #fff;
-      border: none;
+      border: 0;
       border-radius: 6px;
       cursor: pointer;
       font-size: 1rem;
       font-weight: 600;
-      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+      transition: background-color .2s, transform .1s, box-shadow .2s;
       display: inline-block;
       margin-top: 5px;
       margin-right: 10px;
@@ -347,13 +315,8 @@
       color: #333;
       line-height: 1.5;
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
-      transition: background-color 0.3s;
-    }
-
-    [data-theme="dark"] .output-area {
-      background-color: #21262d;
-      color: #c9d1d9;
-      border-color: #444c56;
+      display: none;
+      /* some .output-area começa escondido */
     }
 
     .output-area.large {
@@ -394,7 +357,7 @@
       margin-bottom: 8px;
       font-weight: 600;
       color: #495057;
-      font-size: 0.9rem;
+      font-size: .9rem;
     }
 
     .minifier-column textarea {
@@ -406,45 +369,8 @@
       font-family: Consolas, Monaco, monospace;
       background-color: var(--input-bg);
       color: var(--text-color);
-      transition: border-color 0.2s, box-shadow 0.2s;
-      min-height: 300px;
+      min-height: 500px;
       resize: vertical;
-    }
-
-    .minifier-column textarea:focus {
-      outline: none;
-      border-color: var(--input-focus-border);
-      box-shadow: 0 0 0 4px var(--input-focus-shadow);
-    }
-
-    .status-message {
-      margin-top: 10px;
-      padding: 10px 15px;
-      border-radius: 4px;
-      display: none;
-      font-size: 0.95rem;
-    }
-
-    .status-message.visible {
-      display: block;
-    }
-
-    .status-message.success {
-      background-color: #d1e7dd;
-      color: #0f5132;
-      border-left: 4px solid #198754;
-    }
-
-    .status-message.error {
-      background-color: #f8d7da;
-      color: #842029;
-      border-left: 4px solid #dc3545;
-    }
-
-    .status-message.warning {
-      background-color: #fff3cd;
-      color: #664d03;
-      border-left: 4px solid #ffc107;
     }
 
     @media(max-width:992px) {
@@ -459,7 +385,7 @@
       .sidebar h2,
       .sidebar nav a .link-text {
         opacity: 0;
-        transition: opacity 0.1s ease;
+        transition: opacity .1s ease;
       }
 
       .sidebar:hover h2,
@@ -511,7 +437,7 @@
         position: static;
         width: 100%;
         height: auto;
-        border-right: none;
+        border-right: 0;
         border-bottom: 1px solid var(--border-color);
         overflow-y: hidden;
       }
@@ -573,105 +499,176 @@
         opacity: 1;
       }
     }
+
+    /* Opções de indentação (Desmimificar) */
+    .options-area {
+      margin-top: 15px;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px 20px;
+      flex-wrap: wrap;
+    }
+
+    .options-area label {
+      margin-bottom: 0;
+      font-weight: 500;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+
+    .options-area select,
+    .options-area input[type="number"] {
+      padding: 8px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      background-color: #fff;
+      color: #495057;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      width: 70px;
+    }
   </style>
 </head>
 
-<body data-theme="light">
+<body>
   <div class="app-container">
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <h2>DevKit</h2>
       <nav id="sidebar-nav">
         <ul>
-          <!-- 1) Compressor JS/JSON -->
           <li>
-            <a href="#compressor-js-json" data-tool="compressor-js-json">
-              <span class="link-text">Compressor JS/JSON</span>
+            <a href="#compressor-js-json" data-tool="compressor-js-json" class="active">
+              <span class="link-text">Comprimir Código</span>
             </a>
           </li>
-          <!-- 2) Corrigir Encoding JSON -->
           <li>
             <a href="#corrigir-encoding-json" data-tool="corrigir-encoding-json">
               <span class="link-text">Corrigir Encoding JSON</span>
             </a>
           </li>
-          <!-- 3) Desmimificar Código -->
           <li>
             <a href="#desmimificar-codigo" data-tool="desmimificar-codigo">
               <span class="link-text">Desmimificar Código</span>
             </a>
           </li>
-          <!-- 4) BPMN FIX (NOVO ITEM) -->
           <li>
-            <a href="#bpmn-fix" data-tool="bpmn-fix">
-              <span class="link-text">BPMN FIX</span>
+            <a href="#gerador-cnh" data-tool="gerador-cnh">
+              <span class="link-text">CNH</span>
             </a>
           </li>
-          <!-- 5) Modo Dark -->
           <li>
-            <a href="#modo-dark" data-tool="modo-dark">
-              <span class="link-text">Modo Dark</span>
+            <a href="#gerador-conta-bancaria" data-tool="gerador-conta-bancaria">
+              <span class="link-text">Conta Bancária</span>
             </a>
           </li>
-          <!-- 6) CNH -->
-          <li><a href="#gerador-cnh" data-tool="gerador-cnh"><span class="link-text">CNH</span></a></li>
-          <!-- 7) Conta Bancária -->
-          <li><a href="#gerador-conta-bancaria" data-tool="gerador-conta-bancaria"><span class="link-text">Conta Bancária</span></a></li>
-          <!-- 8) CPF -->
-          <li><a href="#gerador-cpf" data-tool="gerador-cpf"><span class="link-text">CPF</span></a></li>
-          <!-- 9) Nicks -->
-          <li><a href="#gerador-nicks" data-tool="gerador-nicks"><span class="link-text">Nicks</span></a></li>
-          <!-- 10) Nome -->
-          <li><a href="#gerador-nome" data-tool="gerador-nome"><span class="link-text">Nome</span></a></li>
-          <!-- 11) Data de Nascimento -->
-          <li><a href="#gerador-data-nascimento" data-tool="gerador-data-nascimento"><span
-                class="link-text">Data de Nascimento</span></a></li>
-          <!-- 12) Números Aleatórios -->
-          <li><a href="#gerador-numeros-aleatorios" data-tool="gerador-numeros-aleatorios"><span
-                class="link-text">Números Aleatórios</span></a></li>
-          <!-- 13) PIS/PASEP -->
-          <li><a href="#gerador-pis-pasep" data-tool="gerador-pis-pasep"><span class="link-text">PIS/PASEP</span></a></li>
-          <!-- 14) CNPJ -->
-          <li><a href="#gerador-cnpj" data-tool="gerador-cnpj"><span class="link-text">CNPJ</span></a></li>
-          <!-- 15) CEP -->
-          <li><a href="#gerador-cep" data-tool="gerador-cep"><span class="link-text">CEP</span></a></li>
-          <!-- 16) RG -->
-          <li><a href="#gerador-rg" data-tool="gerador-rg"><span class="link-text">RG</span></a></li>
-          <!-- 17) Inscrição Estadual -->
-          <li><a href="#gerador-inscricao-estadual" data-tool="gerador-inscricao-estadual"><span
-                class="link-text">Inscrição Estadual</span></a></li>
-          <!-- 18) Título de Eleitor -->
-          <li><a href="#gerador-titulo-eleitor" data-tool="gerador-titulo-eleitor"><span class="link-text">Título de
-                Eleitor</span></a></li>
-          <!-- 19) Senha -->
-          <li><a href="#gerador-senha" data-tool="gerador-senha"><span class="link-text">Senha</span></a></li>
-          <!-- 20) Gerador PDF Simples -->
-          <li><a href="#gerador-pdf" data-tool="gerador-pdf"><span class="link-text">Gerador PDF Simples</span></a></li>
-          
-          <!-- 21) Anotações -->
-          <li><a href="#anotacoes" data-tool="anotacoes"><span class="link-text">Anotações</span></a></li>
+          <li>
+            <a href="#gerador-cpf" data-tool="gerador-cpf">
+              <span class="link-text">CPF</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-nicks" data-tool="gerador-nicks">
+              <span class="link-text">Nicks</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-nome" data-tool="gerador-nome">
+              <span class="link-text">Nome</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-data-nascimento" data-tool="gerador-data-nascimento">
+              <span class="link-text">Data de Nascimento</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-numeros-aleatorios" data-tool="gerador-numeros-aleatorios">
+              <span class="link-text">Números Aleatórios</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-pis-pasep" data-tool="gerador-pis-pasep">
+              <span class="link-text">PIS/PASEP</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-cnpj" data-tool="gerador-cnpj">
+              <span class="link-text">CNPJ</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-cep" data-tool="gerador-cep">
+              <span class="link-text">CEP</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-rg" data-tool="gerador-rg">
+              <span class="link-text">RG</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-inscricao-estadual" data-tool="gerador-inscricao-estadual">
+              <span class="link-text">Inscrição Estadual</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-titulo-eleitor" data-tool="gerador-titulo-eleitor">
+              <span class="link-text">Título de Eleitor</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-senha" data-tool="gerador-senha">
+              <span class="link-text">Senha</span>
+            </a>
+          </li>
+          <li>
+            <a href="#gerador-pdf" data-tool="gerador-pdf">
+              <span class="link-text">Gerador PDF Simples</span>
+            </a>
+          </li>
+          <li>
+            <a href="#anotacoes" data-tool="anotacoes">
+              <span class="link-text">Anotações</span>
+            </a>
+          </li>
+          <li>
+            <a href="#sobre-nos" data-tool="sobre-nos">
+              <span class="link-text">Sobre nós</span>
+            </a>
+          </li>
         </ul>
       </nav>
     </aside>
 
+    <!-- CONTEÚDO -->
     <main class="content-area">
-      <div class="tool-section active" id="welcome">
-        <h3>DevKit Brasil</h3>
+      <!-- SEÇÃO DE BOAS-VINDAS -->
+      <div class="tool-section" id="welcome">
+        <h3>DevKit</h3>
         <p class="description">
           Ferramentas para gerar dados formatados e utilitários para testes e desenvolvimento.
-          Selecione uma opção no menu lateral.
         </p>
         <div class="disclaimer">
           <strong>Atenção:</strong> Geradores de documentos (CNH, CPF, CNPJ, PIS, RG, IE, Título) criam números com
-          formato válido, mas <strong>matematicamente inválidos</strong>. Use-os exclusivamente para testes. O uso
-          indevido é de sua inteira responsabilidade.
+          formato válido, mas <strong>matematicamente inválidos</strong>. Use-os exclusivamente para testes.
+          O uso indevido é de sua inteira responsabilidade.
         </div>
       </div>
 
-      <!-- 1) Compressor JS/JSON -->
-      <div class="tool-section" id="compressor-js-json">
-        <h3>Compressor JS/JSON</h3>
+      <!-- COMPRESSOR (MINIFICADOR) JS/JSON -->
+      <div class="tool-section active" id="compressor-js-json">
+        <h3>Comprimir Código</h3>
         <div class="description">
-          <p>Remove comentários e espaços desnecessários de códigos JavaScript ou JSON, reduzindo o tamanho.</p>
+          <p>
+            Remove comentários e espaços desnecessários de códigos JavaScript ou JSON, preservando espaços dentro de
+            strings, unificando em uma única linha.
+          </p>
         </div>
         <div class="implementation-area">
           <div class="minifier-container">
@@ -685,375 +682,82 @@
             </div>
           </div>
           <button class="button" id="minificador-botao-minificar">Minificar</button>
-          <div class="output-area" id="minificador-output-status" style="display:none;"></div>
+          <div class="output-area" id="minificador-output-status"></div>
         </div>
       </div>
 
-      <!-- 2) Corrigir Encoding JSON -->
+      <!-- CORRETOR DE ENCODING -->
       <div class="tool-section" id="corrigir-encoding-json">
-        <h3>Corrigir Encoding JSON</h3>
+        <h3>Corretor de Encoding de Texto</h3>
         <div class="description">
-          <p>Recebe um JSON com o Encoding 'quebrado'. Corrige e converte para ISO-8859-1</p>
+          <p>
+            Cole o texto que possui problemas de encoding (UTF-8 mal interpretado, ou ISO-8859-1/Windows-1252 querendo
+            ser UTF-8). Tentaremos normalizá-lo e exibi-lo como UTF-8 correto.
+          </p>
         </div>
+
         <div class="implementation-area">
           <div class="form-group">
-            <label for="inputText">JSON de Entrada (UTF-8):</label>
-            <textarea id="inputText"></textarea>
+            <label for="inputText">Texto com Problema:</label>
+            <textarea id="inputText" rows="8" placeholder="Exemplo: OlÃ¡ Mundo"></textarea>
           </div>
 
-          <button id="adjustButton" class="button">Corrigir</button>
+          <button class="button" id="correctButton">Corrigir Encoding</button>
 
-          <div class="form-group" style="margin-top:20px;">
-            <label for="outputText">JSON de Saída (ISO-8859-1 + escapes se necessário):</label>
-            <textarea id="outputText" class="output-area" readonly></textarea>
+          <div class="form-group">
+            <label for="outputText">Texto Corrigido (UTF-8):</label>
+            <textarea id="outputText" rows="8" readonly placeholder="O texto corrigido aparecerá aqui..."></textarea>
           </div>
 
-          <div id="statusMessage" class="status-message"></div>
+          <!-- Status da conversão -->
+          <div class="output-area" id="statusArea">
+            <!-- Podemos deixar um título se desejar -->
+            <h4 style="margin-top:0">Status da Conversão:</h4>
+            <p id="statusMessage">Aguardando entrada...</p>
+          </div>
         </div>
-        <!-- SCRIPT da funcionalidade de conversão (NÃO MODIFICAR LÓGICA) -->
-        <script>
-        "use strict";
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const inputText = document.getElementById('inputText');
-            const outputText = document.getElementById('outputText');
-            const adjustButton = document.getElementById('adjustButton');
-            const statusMessage = document.getElementById('statusMessage');
-
-            adjustButton.addEventListener('click', handleAdjustClick);
-
-            function handleAdjustClick() {
-                clearOutputAndStatus();
-                const rawInput = inputText.value;
-
-                if (!rawInput.trim()) {
-                    showStatus('Entrada está vazia. Por favor, cole o JSON misto (UTF-8 e ISO-8859-1).', 'warning');
-                    return;
-                }
-
-                // 1) Decodificar do "misto" para Unicode pleno, sem perder info
-                let mixedDecoded;
-                try {
-                    mixedDecoded = decodeMixedUtf8AndLatin1(rawInput);
-                } catch (error) {
-                    showStatus('Erro inesperado ao tentar decodificar arquivo misto.', 'error');
-                    outputText.value = rawInput;
-                    return;
-                }
-
-                // 2) Tentar analisar como JSON
-                let finalOutputString = '';
-                let isJsonValid = false;
-                let parseError = null;
-
-                // Placeholders para arrays específicas
-                const condSourcePlaceholder = '__COND_SOURCE_MINIFIED_PLACEHOLDER__';
-                const formSourcePlaceholderPrefix = '__FORM_SOURCE_';
-                const formSourcePlaceholderSuffix = '_PLACEHOLDER__';
-
-                let condSourceReplacement = null;
-                const formSourceReplacements = [];
-
-                try {
-                    // Tenta converter a string decodificada para objeto
-                    let parsedJson = JSON.parse(mixedDecoded);
-
-                    // Se for objeto/array válido
-                    if (parsedJson && typeof parsedJson === 'object' && parsedJson !== null) {
-
-                        // Se conditionalsSource for array, substituir por placeholder
-                        if (Array.isArray(parsedJson.conditionalsSource)) {
-                            const originalValue = parsedJson.conditionalsSource;
-                            const minifiedString = JSON.stringify(originalValue);
-                            const placeholderInString = `"${condSourcePlaceholder}"`;
-                            parsedJson.conditionalsSource = condSourcePlaceholder;
-                            condSourceReplacement = {
-                                placeholderInString,
-                                minifiedString,
-                                originalValue
-                            };
-                        }
-
-                        // Se forms for array, iterar e substituir formSource
-                        if (Array.isArray(parsedJson.forms)) {
-                            parsedJson.forms.forEach((formObject, index) => {
-                                if (formObject && typeof formObject === 'object'
-                                    && Array.isArray(formObject.formSource)) {
-
-                                    const originalValue = formObject.formSource;
-                                    const minifiedString = JSON.stringify(originalValue);
-                                    const placeholder = `${formSourcePlaceholderPrefix}${index}${formSourcePlaceholderSuffix}`;
-                                    const placeholderInString = `"${placeholder}"`;
-
-                                    formObject.formSource = placeholder;
-                                    formSourceReplacements.push({
-                                        index,
-                                        placeholderInString,
-                                        minifiedString,
-                                        originalValue
-                                    });
-                                }
-                            });
-                        }
-
-                        // Converte para JSON com indentação de 4 espaços
-                        finalOutputString = JSON.stringify(parsedJson, null, 4);
-
-                        // Substitui placeholders pelos arrays minificados inline
-                        if (condSourceReplacement) {
-                            finalOutputString = finalOutputString.replace(
-                                condSourceReplacement.placeholderInString,
-                                condSourceReplacement.minifiedString
-                            );
-                        }
-
-                        formSourceReplacements.forEach(replacement => {
-                            finalOutputString = finalOutputString.replace(
-                                replacement.placeholderInString,
-                                replacement.minifiedString
-                            );
-                        });
-
-                        // Restaura para o objeto original (caso queira reutilizar parsedJson)
-                        if (condSourceReplacement) {
-                            parsedJson.conditionalsSource = condSourceReplacement.originalValue;
-                        }
-
-                        formSourceReplacements.forEach(replacement => {
-                            if (parsedJson.forms && parsedJson.forms[replacement.index]) {
-                                parsedJson.forms[replacement.index].formSource = replacement.originalValue;
-                            }
-                        });
-
-                    } else {
-                        // Se não for objeto, mas parseou => string, number, etc.
-                        finalOutputString = JSON.stringify(parsedJson, null, 4);
-                    }
-
-                    isJsonValid = true;
-
-                } catch (error) {
-                    // JSON inválido => exibir string decodificada sem parse
-                    parseError = error.message;
-                    finalOutputString = mixedDecoded;
-                    isJsonValid = false;
-                }
-
-                // 3) Converter a saída final para ISO-8859-1 (com escapes \uXXXX quando > 255)
-                finalOutputString = convertToISO8859_1(finalOutputString);
-
-                // 4) Exibir no textarea
-                outputText.value = finalOutputString;
-
-                // Exibir mensagens
-                if (isJsonValid) {
-                    let successMsg = 'Arquivo misto decodificado com sucesso! JSON válido gerado. ';
-                    successMsg += 'Convertido completamente para ISO-8859-1 (com escapes se necessário).';
-                    let formattedParts = [];
-                    if (condSourceReplacement) {
-                        formattedParts.push('"conditionalsSource" inline');
-                    }
-                    if (formSourceReplacements.length > 0) {
-                        const indices = formSourceReplacements
-                            .map(r => `forms[${r.index}].formSource`)
-                            .join(', ');
-                        formattedParts.push(`${indices} inline`);
-                    }
-                    if (formattedParts.length > 0) {
-                        successMsg += ` Partes específicas minificadas (${formattedParts.join('; ')}).`;
-                    }
-                    showStatus(successMsg, 'success');
-                } else {
-                    showStatus(
-                        'Decodificação de encoding misto realizada. ' +
-                        'Porém, o JSON continua inválido: ' + (parseError || 'erro desconhecido') +
-                        '. Exibindo texto ISO-8859-1 resultante mesmo assim.',
-                        'error'
-                    );
-                }
-            }
-
-            /**
-             * Decodifica uma string que contenha partes em UTF-8 e partes em ISO-8859-1.
-             */
-            function decodeMixedUtf8AndLatin1(str) {
-                const bytes = new Uint8Array(str.length);
-                for (let i = 0; i < str.length; i++) {
-                    bytes[i] = str.charCodeAt(i) & 0xFF;
-                }
-
-                const codePoints = [];
-                let i = 0;
-                while (i < bytes.length) {
-                    const b = bytes[i];
-
-                    if (b < 0x80) {
-                        codePoints.push(b);
-                        i++;
-                    }
-                    else if ((b & 0xE0) === 0xC0 && i + 1 < bytes.length) {
-                        const b1 = bytes[i + 1];
-                        if ((b1 & 0xC0) === 0x80) {
-                            const cp = ((b & 0x1F) << 6) | (b1 & 0x3F);
-                            codePoints.push(cp);
-                            i += 2;
-                        } else {
-                            codePoints.push(b);
-                            i++;
-                        }
-                    }
-                    else if ((b & 0xF0) === 0xE0 && i + 2 < bytes.length) {
-                        const b1 = bytes[i + 1];
-                        const b2 = bytes[i + 2];
-                        if (((b1 & 0xC0) === 0x80) && ((b2 & 0xC0) === 0x80)) {
-                            const cp = ((b & 0x0F) << 12) |
-                                       ((b1 & 0x3F) << 6) |
-                                       (b2 & 0x3F);
-                            codePoints.push(cp);
-                            i += 3;
-                        } else {
-                            codePoints.push(b);
-                            i++;
-                        }
-                    }
-                    else if ((b & 0xF8) === 0xF0 && i + 3 < bytes.length) {
-                        const b1 = bytes[i + 1];
-                        const b2 = bytes[i + 2];
-                        const b3 = bytes[i + 3];
-                        if (((b1 & 0xC0) === 0x80) &&
-                            ((b2 & 0xC0) === 0x80) &&
-                            ((b3 & 0xC0) === 0x80)) {
-                            const cp = ((b & 0x07) << 18) |
-                                       ((b1 & 0x3F) << 12) |
-                                       ((b2 & 0x3F) << 6) |
-                                       (b3 & 0x3F);
-                            codePoints.push(cp);
-                            i += 4;
-                        } else {
-                            codePoints.push(b);
-                            i++;
-                        }
-                    }
-                    else {
-                        codePoints.push(b);
-                        i++;
-                    }
-                }
-
-                let result = '';
-                for (const cp of codePoints) {
-                    result += String.fromCodePoint(cp);
-                }
-                return result;
-            }
-
-            /**
-             * Converte a string para ficar 100% em ISO-8859-1:
-             * - Caracteres <= 255 são mantidos como literais.
-             * - Caracteres acima de 255 são substituídos por \uXXXX.
-             */
-            function convertToISO8859_1(str) {
-                let result = [];
-                for (let i = 0; i < str.length; i++) {
-                    const code = str.codePointAt(i);
-
-                    if (code > 0xFFFF) {
-                        i++;
-                    }
-
-                    if (code <= 0xFF) {
-                        result.push(String.fromCharCode(code));
-                    } else {
-                        let hex = code.toString(16).padStart(4, '0');
-                        result.push("\\u" + hex);
-                    }
-                }
-                return result.join('');
-            }
-
-            function showStatus(message, type) {
-                statusMessage.textContent = message;
-                statusMessage.className = 'status-message';
-                statusMessage.classList.add(type, 'visible');
-            }
-
-            function clearOutputAndStatus() {
-                outputText.value = '';
-                statusMessage.textContent = '';
-                statusMessage.className = 'status-message';
-            }
-
-            if (statusMessage) {
-                statusMessage.classList.add('status-message');
-            }
-        });
-        </script>
       </div>
 
-      <!-- 3) Desmimificar Código -->
+      <!-- DESMIMIFICAR CÓDIGO -->
       <div class="tool-section" id="desmimificar-codigo">
-        <h3>Desmimificar Código (JS/JSON)</h3>
+        <h3>Desmimificar Código (JS/JSON) <span class="beta-badge">Com js-beautify</span></h3>
         <div class="description">
-          <p>Se for JSON válido, faz <code>JSON.stringify</code>
-            indentado. Caso contrário, aplica quebras básicas após <code>;</code>,<code>{</code> e <code>}</code>.</p>
+          <p>
+            Cole seu código JavaScript ou JSON minificado/desorganizado abaixo. A ferramenta utilizará a biblioteca
+            <code>js-beautify</code> para formatá-lo, aplicando indentação e espaçamento para melhor legibilidade.
+          </p>
         </div>
+
+        <div class="options-area">
+          <label for="indentation-type-desmimificar">Indentação:</label>
+          <select id="indentation-type-desmimificar" aria-label="Tipo de indentação">
+            <option value="spaces">Espaços</option>
+            <option value="tabs">Tabs</option>
+          </select>
+
+          <label for="indentation-size-desmimificar">Tamanho:</label>
+          <input type="number" id="indentation-size-desmimificar" value="2" min="1" max="8"
+            aria-label="Tamanho da indentação (para espaços)" />
+        </div>
+
         <div class="implementation-area">
           <div class="minifier-container">
             <div class="minifier-column">
-              <label for="desmimificar-codigo-original">Código Minificado:</label>
-              <textarea id="desmimificar-codigo-original"></textarea>
+              <label for="desmimificar-codigo-original">Código Original (JS/JSON):</label>
+              <textarea id="desmimificar-codigo-original" placeholder="Cole seu código aqui..." rows="18"></textarea>
             </div>
             <div class="minifier-column">
-              <label for="desmimificar-codigo-output">Código Desmimificado:</label>
-              <textarea id="desmimificar-codigo-output" readonly></textarea>
+              <label for="desmimificar-codigo-output">Código Formatado:</label>
+              <textarea id="desmimificar-codigo-output" readonly placeholder="O código formatado aparecerá aqui..."
+                rows="18"></textarea>
             </div>
           </div>
-          <button class="button" id="botao-desmimificar">Desmimificar</button>
-          <div class="output-area" id="status-desmimificar" style="display:none;"></div>
+          <button class="button" id="botao-desmimificar">Desmimificar com js-beautify</button>
+          <div class="output-area" id="status-desmimificar"></div>
         </div>
       </div>
 
-      <!-- 4) BPMN FIX (NOVO) -->
-      <div class="tool-section" id="bpmn-fix">
-        <h3>BPMN FIX</h3>
-        <div class="description">
-          <p>Insira o código BPMN com problemas e obtenha a versão corrigida. Esta funcionalidade chama o servidor para
-            validar e corrigir o diagrama BPMN, mantendo as extensões Activiti e resolvendo inconsistências.</p>
-        </div>
-        <div class="implementation-area">
-          <div class="form-group">
-            <label for="bpmnFixInput">Código BPMN Quebrado:</label>
-            <textarea id="bpmnFixInput"></textarea>
-          </div>
-
-          <button id="bpmnFixButton" class="button">Corrigir BPMN</button>
-
-          <div class="form-group" style="margin-top:20px;">
-            <label for="bpmnFixOutput">Código BPMN Corrigido:</label>
-            <textarea id="bpmnFixOutput" class="output-area" readonly></textarea>
-          </div>
-
-          <div id="bpmnFixStatus" class="status-message"></div>
-        </div>
-      </div>
-
-      <!-- 5) Modo Dark -->
-      <div class="tool-section" id="modo-dark">
-        <h3>Alternar Modo Dark</h3>
-        <div class="description">
-          <p>Ative ou desative o tema escuro para uma experiência visual diferenciada.</p>
-        </div>
-        <div class="implementation-area">
-          <div class="form-group">
-            <label class="checkbox-label">
-              <input type="checkbox" id="dark-toggle" />
-              Habilitar Modo Escuro
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6) CNH -->
+      <!-- GERADOR CNH -->
       <div class="tool-section" id="gerador-cnh">
         <h3>Gerador de CNH</h3>
         <div class="description">
@@ -1070,21 +774,27 @@
         </div>
       </div>
 
-      <!-- 7) Conta Bancária -->
+      <!-- GERADOR CONTA BANCÁRIA -->
       <div class="tool-section" id="gerador-conta-bancaria">
         <h3>Gerador de Conta Bancária</h3>
         <div class="description">
-          <p>Gera dados fictícios de conta bancária (Banco, Agência, Conta com DV aleatório).</p>
-          <p><strong>Lógica:</strong> Seleciona um banco da lista, gera agência e conta aleatórias, incluindo um dígito
-            verificador aleatório (não calculado).</p>
+          <p>
+            Gera dados fictícios de conta bancária (Banco, Agência, Conta com DV aleatório).
+          </p>
+          <p>
+            <strong>Lógica:</strong> Seleciona um banco da lista, gera agência e conta aleatórias, incluindo um
+            dígito verificador aleatório (não calculado).
+          </p>
           <p><strong>Saída:</strong> Banco, Agência, Conta.</p>
         </div>
-        <div class="disclaimer">Dados bancários gerados são inválidos. Apenas para testes.</div>
+        <div class="disclaimer">
+          Dados bancários gerados são inválidos. Apenas para testes.
+        </div>
         <div class="implementation-area">
           <div class="form-group">
             <label for="conta-banco-select">Selecionar Banco (Opcional):</label>
             <select id="conta-banco-select">
-              <option value="">Aleatório</option>
+              <option value>Aleatório</option>
             </select>
           </div>
           <button class="button" id="btn-gerar-conta">Gerar Conta</button>
@@ -1092,13 +802,21 @@
         </div>
       </div>
 
-      <!-- 8) CPF -->
+      <!-- GERADOR CPF -->
       <div class="tool-section" id="gerador-cpf">
         <h3>Gerador de CPF</h3>
         <div class="description">
-          <p>Gera números de CPF formatados (<code>XXX.XXX.XXX-XX</code>) e <strong>matematicamente inválidos</strong>.</p>
+          <p>
+            Gera números de CPF formatados (<code>XXX.XXX.XXX-XX</code>) e
+            <strong>matematicamente inválidos</strong>.
+          </p>
+          <p>
+            <strong>Lógica:</strong> Gera 11 dígitos aleatórios e aplica formatação opcional.
+          </p>
         </div>
-        <div class="disclaimer">Use apenas para testes. CPFs gerados são inválidos.</div>
+        <div class="disclaimer">
+          Use apenas para testes. CPFs gerados são inválidos.
+        </div>
         <div class="implementation-area">
           <div class="form-group">
             <label class="checkbox-label">
@@ -1111,13 +829,12 @@
         </div>
       </div>
 
-      <!-- 9) Nicks -->
+      <!-- GERADOR NICKS -->
       <div class="tool-section" id="gerador-nicks">
         <h3>Gerador de Nicks</h3>
         <div class="description">
           <p>Cria sugestões de Nomes de Usuário (nicks).</p>
-          <p><strong>Lógica:</strong> Combina uma palavra-chave (opcional) com prefixos/sufixos comuns e números
-            aleatórios.</p>
+          <p><strong>Lógica:</strong> Combina uma palavra-chave (opcional) com prefixos/sufixos comuns e números.</p>
         </div>
         <div class="implementation-area">
           <div class="form-group">
@@ -1133,7 +850,7 @@
         </div>
       </div>
 
-      <!-- 10) Nome -->
+      <!-- GERADOR NOME -->
       <div class="tool-section" id="gerador-nome">
         <h3>Gerador de Nome</h3>
         <div class="description">
@@ -1154,12 +871,12 @@
         </div>
       </div>
 
-      <!-- 11) Data de Nascimento -->
+      <!-- GERADOR DATA DE NASCIMENTO -->
       <div class="tool-section" id="gerador-data-nascimento">
         <h3>Gerador de Data de Nascimento</h3>
         <div class="description">
           <p>Gera uma data de nascimento aleatória dentro de um intervalo de anos.</p>
-          <p><strong>Lógica:</strong> Escolhe aleatoriamente ano, mês e dia (válido para o mês/ano).</p>
+          <p><strong>Lógica:</strong> Escolhe aleatoriamente ano, mês e dia (válido).</p>
         </div>
         <div class="implementation-area">
           <div class="form-group">
@@ -1175,7 +892,7 @@
         </div>
       </div>
 
-      <!-- 12) Números Aleatórios -->
+      <!-- GERADOR NÚMEROS ALEATÓRIOS -->
       <div class="tool-section" id="gerador-numeros-aleatorios">
         <h3>Gerador de Números Aleatórios</h3>
         <div class="description">
@@ -1205,11 +922,14 @@
         </div>
       </div>
 
-      <!-- 13) PIS/PASEP -->
+      <!-- GERADOR PIS/PASEP -->
       <div class="tool-section" id="gerador-pis-pasep">
         <h3>Gerador de PIS/PASEP</h3>
         <div class="description">
-          <p>Gera números no formato PIS/PASEP (<code>XXX.XXXXX.XX-X</code>) e <strong>inválidos</strong>.</p>
+          <p>
+            Gera números no formato PIS/PASEP (<code>XXX.XXXXX.XX-X</code>) e
+            <strong>inválidos</strong>.
+          </p>
           <p><strong>Lógica:</strong> Gera 11 dígitos aleatórios e formata.</p>
         </div>
         <div class="disclaimer">
@@ -1227,14 +947,19 @@
         </div>
       </div>
 
-      <!-- 14) CNPJ -->
+      <!-- GERADOR CNPJ -->
       <div class="tool-section" id="gerador-cnpj">
         <h3>Gerador de CNPJ</h3>
         <div class="description">
-          <p>Gera números de CNPJ formatados (<code>XX.XXX.XXX/YYYY-ZZ</code>) e <strong>inválidos</strong>.</p>
+          <p>
+            Gera números de CNPJ formatados (<code>XX.XXX.XXX/YYYY-ZZ</code>) e
+            <strong>inválidos</strong>.
+          </p>
           <p><strong>Lógica:</strong> Gera 14 dígitos aleatórios e formata.</p>
         </div>
-        <div class="disclaimer">Use apenas para testes. CNPJs gerados são inválidos.</div>
+        <div class="disclaimer">
+          Use apenas para testes. CNPJs gerados são inválidos.
+        </div>
         <div class="implementation-area">
           <div class="form-group">
             <label class="checkbox-label">
@@ -1247,12 +972,12 @@
         </div>
       </div>
 
-      <!-- 15) CEP -->
+      <!-- GERADOR CEP -->
       <div class="tool-section" id="gerador-cep">
         <h3>Gerador de CEP</h3>
         <div class="description">
           <p>Gera códigos CEP formatados (<code>NNNNN-NNN</code>).</p>
-          <p><strong>Lógica:</strong> Gera 8 números aleatórios e formata. Não garante que o CEP exista.</p>
+          <p><strong>Lógica:</strong> Gera 8 números aleatórios e formata.</p>
         </div>
         <div class="implementation-area">
           <div class="form-group">
@@ -1266,12 +991,14 @@
         </div>
       </div>
 
-      <!-- 16) RG -->
+      <!-- GERADOR RG -->
       <div class="tool-section" id="gerador-rg">
         <h3>Gerador de RG</h3>
         <div class="description">
-          <p>Gera números de RG formatados e <strong>inválidos</strong> para um estado selecionado (Exemplo: SP).</p>
-          <p><strong>Lógica:</strong> Gera dígitos aleatórios e aplica a máscara do estado. Formato varia muito.</p>
+          <p>
+            Gera números de RG formatados e <strong>inválidos</strong> para um estado selecionado (Exemplo: SP).
+          </p>
+          <p><strong>Lógica:</strong> Gera dígitos aleatórios e aplica a máscara do estado.</p>
         </div>
         <div class="disclaimer">
           RG gerado é inválido. Formato pode não corresponder a todos os estados.
@@ -1290,13 +1017,14 @@
         </div>
       </div>
 
-      <!-- 17) Inscrição Estadual -->
+      <!-- GERADOR INSCRIÇÃO ESTADUAL -->
       <div class="tool-section" id="gerador-inscricao-estadual">
         <h3>Gerador Inscrição Estadual (IE)</h3>
         <div class="description">
-          <p>Gera números de IE formatados e <strong>inválidos</strong> para um estado (Exemplo: SP).</p>
-          <p><strong>Lógica:</strong> Gera dígitos aleatórios e aplica máscara. Regras são complexas e variam por UF.
+          <p>
+            Gera números de IE formatados e <strong>inválidos</strong> para um estado (Exemplo: SP).
           </p>
+          <p><strong>Lógica:</strong> Gera dígitos aleatórios e aplica máscara. Regras variam por UF.</p>
         </div>
         <div class="disclaimer">
           IE gerada é inválida e apenas para o formato de exemplo (SP).
@@ -1314,11 +1042,13 @@
         </div>
       </div>
 
-      <!-- 18) Título de Eleitor -->
+      <!-- GERADOR TÍTULO DE ELEITOR -->
       <div class="tool-section" id="gerador-titulo-eleitor">
         <h3>Gerador Título de Eleitor</h3>
         <div class="description">
-          <p>Gera números de Título de Eleitor formatados (<code>NNNN NNNN NN NN</code>) e <strong>inválidos</strong>.
+          <p>
+            Gera números de Título de Eleitor formatados (<code>NNNN NNNN NN NN</code>) e
+            <strong>inválidos</strong>.
           </p>
           <p><strong>Lógica:</strong> Gera 12 dígitos aleatórios e aplica a formatação.</p>
         </div>
@@ -1337,7 +1067,7 @@
         </div>
       </div>
 
-      <!-- 19) Senha -->
+      <!-- GERADOR SENHA -->
       <div class="tool-section" id="gerador-senha">
         <h3>Gerador de Senha</h3>
         <div class="description">
@@ -1349,27 +1079,37 @@
             <input type="number" id="senha-length" value="16" min="4" max="128" />
           </div>
           <div class="form-group">
-            <label class="checkbox-label"><input type="checkbox" id="senha-upper" checked /> Incluir Maiúsculas
-              (ABC)</label><br />
-            <label class="checkbox-label"><input type="checkbox" id="senha-lower" checked /> Incluir Minúsculas
-              (abc)</label><br />
-            <label class="checkbox-label"><input type="checkbox" id="senha-numbers" checked /> Incluir Números
-              (123)</label><br />
-            <label class="checkbox-label"><input type="checkbox" id="senha-symbols" checked /> Incluir Símbolos
-              (!@#$)</label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="senha-upper" checked />
+              Incluir Maiúsculas (ABC)
+            </label><br />
+            <label class="checkbox-label">
+              <input type="checkbox" id="senha-lower" checked />
+              Incluir Minúsculas (abc)
+            </label><br />
+            <label class="checkbox-label">
+              <input type="checkbox" id="senha-numbers" checked />
+              Incluir Números (123)
+            </label><br />
+            <label class="checkbox-label">
+              <input type="checkbox" id="senha-symbols" checked />
+              Incluir Símbolos (!@#$)
+            </label>
           </div>
           <button class="button" id="btn-gerar-senha">Gerar Senha</button>
-          <div class="output-area" id="output-senha" style="font-size:1.1rem;word-break:break-all;"></div>
+          <div class="output-area" id="output-senha" style="font-size:1.1rem;word-break:break-all"></div>
         </div>
       </div>
 
-      <!-- 20) Gerador PDF -->
+      <!-- GERADOR PDF -->
       <div class="tool-section" id="gerador-pdf">
         <h3>Gerador PDF Simples</h3>
         <div class="description">
           <p>Cria um arquivo PDF básico contendo o texto fornecido.</p>
-          <p><strong>Lógica:</strong> Utiliza a biblioteca jsPDF para inserir o texto em um documento PDF e o
-            disponibiliza para download com um nome sequencial.</p>
+          <p>
+            <strong>Lógica:</strong> Utiliza a biblioteca jsPDF para inserir o texto em um documento PDF e o
+            disponibiliza para download com um nome sequencial.
+          </p>
         </div>
         <div class="implementation-area">
           <div class="form-group">
@@ -1381,13 +1121,13 @@
             <input type="text" id="pdf-base-filename" value="documento" />
           </div>
           <button class="button" id="btn-gerar-pdf">Gerar e Baixar PDF</button>
-          <div id="pdf-counter-info" style="font-size:0.85rem;color:var(--text-muted);margin-top:10px;">
+          <div id="pdf-counter-info" style="font-size:0.85rem;color:var(--text-muted);margin-top:10px">
             Próximo arquivo: <span id="pdf-next-count">1</span>
           </div>
         </div>
       </div>
 
-      <!-- 21) Anotações -->
+      <!-- ANOTAÇÕES -->
       <div class="tool-section" id="anotacoes">
         <h3>Anotações</h3>
         <div class="description">
@@ -1399,699 +1139,1195 @@
             <textarea id="anotacoes-texto" rows="8"></textarea>
           </div>
           <button class="button" id="btn-salvar-anotacoes">Salvar Anotações</button>
-          <div class="output-area" id="anotacoes-status" style="display:none;"></div>
+          <div class="output-area" id="anotacoes-status"></div>
+        </div>
+      </div>
+
+      <!-- SOBRE NÓS -->
+      <div class="tool-section" id="sobre-nos">
+        <h3>Sobre nós</h3>
+        <div class="description">
+          <p>Desenvolvido por Daniel Barboza da Silva</p>
         </div>
       </div>
     </main>
   </div>
 
   <script>
-    const { jsPDF } = window.jspdf;
-    document.addEventListener("DOMContentLoaded", () => {
-      const sidebarNav = document.getElementById("sidebar-nav");
-      const toolSections = document.querySelectorAll(".content-area .tool-section");
-      const contentArea = document.querySelector(".content-area");
+    /**********************************
+     * 1) LÓGICA PARA EXIBIR SEÇÕES   *
+     **********************************/
+    document.addEventListener("DOMContentLoaded", function () {
+      const navLinks = document.querySelectorAll('#sidebar-nav a[data-tool]');
+      const allSections = document.querySelectorAll('.tool-section');
 
-      function showToolSection(toolId) {
-        let foundSection = false;
-        toolSections.forEach(s => s.classList.remove("active"));
-        sidebarNav.querySelectorAll("a").forEach(l => l.classList.remove("active"));
-        const sectionToShow = document.getElementById(toolId);
-        if (sectionToShow) {
-          sectionToShow.classList.add("active");
-          foundSection = true;
-          const linkToActivate = sidebarNav.querySelector(`a[data-tool="${toolId}"]`);
-          if (linkToActivate) linkToActivate.classList.add("active");
-          if (contentArea) {
-            contentArea.scrollTo({ top: 0, behavior: "smooth" });
-          }
-          if (toolId === "gerador-conta-bancaria") { populateBankSelect(); }
-        }
-        if (!foundSection) {
-          const welcomeSection = document.getElementById("welcome");
-          if (welcomeSection) welcomeSection.classList.add("active");
-        }
-      }
+      navLinks.forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          // Remove "active" de todos os links e seções
+          navLinks.forEach(ln => ln.classList.remove('active'));
+          allSections.forEach(section => section.classList.remove('active'));
 
-      if (sidebarNav) {
-        sidebarNav.addEventListener("click", event => {
-          const link = event.target.closest("a[data-tool]");
-          if (link) {
-            event.preventDefault();
-            const toolId = link.getAttribute("data-tool");
-            showToolSection(toolId);
-            if (window.history.replaceState) {
-              window.history.replaceState(null, "", "#" + toolId);
-            } else {
-              window.location.hash = "#" + toolId;
-            }
+          // Pega o id da seção alvo
+          const toolId = link.getAttribute('data-tool');
+          const targetSection = document.getElementById(toolId);
+
+          // Ativa a seção e o link
+          if (targetSection) {
+            targetSection.classList.add('active');
           }
+          link.classList.add('active');
         });
-      }
+      });
+    });
 
-      const currentHash = window.location.hash.substring(1);
-      if (currentHash && document.getElementById(currentHash)) {
-        showToolSection(currentHash);
-      } else {
-        showToolSection("welcome");
-        if (window.history.replaceState) {
-          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    /*************************************
+     * 2) FUNÇÕES DE MINIFICAÇÃO E AFIN   *
+     *************************************/
+    const btnMinificar = document.getElementById("minificador-botao-minificar");
+    const codigoOriginalTextarea = document.getElementById("minificador-codigo-original");
+    const codigoMinificadoTextarea = document.getElementById("minificador-codigo-minificado");
+    const minificadorStatus = document.getElementById("minificador-output-status");
+
+    if (
+      btnMinificar &&
+      codigoOriginalTextarea &&
+      codigoMinificadoTextarea &&
+      minificadorStatus
+    ) {
+      btnMinificar.addEventListener("click", () => {
+        const codigoOriginal = codigoOriginalTextarea.value;
+        minificadorStatus.style.display = 'none'; // reinicia
+        minificadorStatus.className = 'output-area';
+
+        if (!codigoOriginal.trim()) {
+          codigoMinificadoTextarea.value = "";
+          minificadorStatus.textContent = "Nenhum código para minificar.";
+          minificadorStatus.style.display = "block";
+          minificadorStatus.classList.add("warning");
+          return;
         }
-      }
+        const codigoMinificadoTexto = minifyCode(codigoOriginal);
+        codigoMinificadoTextarea.value = codigoMinificadoTexto;
 
-      window.addEventListener("hashchange", () => {
-        const newHash = window.location.hash.substring(1);
-        if (newHash && document.getElementById(newHash)) {
-          showToolSection(newHash);
+        if (codigoMinificadoTexto === "Erro durante a minificação.") {
+          minificadorStatus.textContent = "Ocorreu um erro durante a minificação.";
+          minificadorStatus.style.display = "block";
+          minificadorStatus.classList.add("error");
         } else {
-          showToolSection("welcome");
+          const originalLength = codigoOriginal.length;
+          const minifiedLength = codigoMinificadoTexto.length;
+          const reduction = originalLength > 0
+            ? ((1 - (minifiedLength / originalLength)) * 100).toFixed(1)
+            : 0;
+          minificadorStatus.textContent = `Minificado com sucesso! Redução de ${reduction}%.`;
+          minificadorStatus.style.display = "block";
+          minificadorStatus.classList.add("success");
         }
       });
+    }
 
-      const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-      const getRandomChar = charset => charset.charAt(Math.floor(Math.random() * charset.length));
-      const padZero = (num, length) => String(num).padStart(length, "0");
+    function minifyCode(code) {
+      try {
+        // Extra simplificado para remover comentários e espaços
+        const tokens = [];
+        let placeholders = [];
+        let placeholderIndex = 0;
+        let insideSingle = false;
+        let insideDouble = false;
+        let insideBacktick = false;
+        let result = "";
 
-      const sampleBanks = [
-        { code: "001", name: "Banco do Brasil" },
-        { code: "237", name: "Bradesco" },
-        { code: "341", name: "Itaú Unibanco" },
-        { code: "104", name: "Caixa Econômica Federal" },
-        { code: "033", name: "Santander" },
-        { code: "745", name: "Citibank" },
-        { code: "260", name: "Nu Pagamentos (Nubank)" },
-        { code: "077", name: "Banco Inter" },
-        { code: "336", name: "Banco C6" }
-      ];
-      let banksPopulated = false;
-      function populateBankSelect() {
-        const contaBancoSelect = document.getElementById("conta-banco-select");
-        if (!contaBancoSelect || banksPopulated) return;
-        while (contaBancoSelect.options.length > 1) {
-          contaBancoSelect.remove(1);
-        }
-        sampleBanks.forEach(bank => {
-          const option = document.createElement("option");
-          option.value = bank.code;
-          option.textContent = `${bank.code} - ${bank.name}`;
-          contaBancoSelect.appendChild(option);
-        });
-        banksPopulated = true;
-      }
-
-      /* ---------- CNH ---------- */
-      const btnGerarCnh = document.getElementById("btn-gerar-cnh");
-      const outputCnh = document.getElementById("output-cnh");
-      if (btnGerarCnh && outputCnh) {
-        btnGerarCnh.addEventListener("click", () => {
-          let cnh = "";
-          for (let i = 0; i < 11; i++) cnh += getRandomInt(0, 9);
-          const validYear = new Date().getFullYear() + getRandomInt(2, 7);
-          const validMonth = getRandomInt(1, 12);
-          const validDay = getRandomInt(1, 28);
-          const categories = ["A", "B", "AB", "C", "D", "E", "AC", "AD", "AE"];
-          const category = categories[getRandomInt(0, categories.length - 1)];
-          outputCnh.textContent =
-            `Número CNH (Inválido): ${cnh}\n` +
-            `Validade (Fictícia): ${padZero(validDay, 2)}/${padZero(validMonth, 2)}/${validYear}\n` +
-            `Categoria (Aleatória): ${category}`;
-          outputCnh.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- Conta Bancária ---------- */
-      const btnGerarConta = document.getElementById("btn-gerar-conta");
-      const outputConta = document.getElementById("output-conta");
-      if (btnGerarConta && outputConta) {
-        btnGerarConta.addEventListener("click", () => {
-          const contaBancoSelect = document.getElementById("conta-banco-select");
-          let selectedBankCode = contaBancoSelect.value;
-          let bank;
-          if (selectedBankCode) {
-            bank = sampleBanks.find(b => b.code === selectedBankCode);
-          } else {
-            bank = sampleBanks[getRandomInt(0, sampleBanks.length - 1)];
-          }
-          if (!bank) {
-            bank = { code: "000", name: "Banco Desconhecido" };
-          }
-          const agencia = padZero(getRandomInt(1, 9999), 4);
-          const contaNum = padZero(getRandomInt(1000, 999999), 6);
-          const contaDv = getRandomInt(0, 9);
-          outputConta.textContent =
-            `Banco: ${bank.code} - ${bank.name}\n` +
-            `Agência: ${agencia}\n` +
-            `Conta: ${contaNum}-${contaDv}`;
-          outputConta.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- CPF ---------- */
-      const btnGerarCpf = document.getElementById("btn-gerar-cpf");
-      const outputCpf = document.getElementById("output-cpf");
-      const cpfFormatadoCheck = document.getElementById("cpf-formatado");
-      if (btnGerarCpf && outputCpf && cpfFormatadoCheck) {
-        btnGerarCpf.addEventListener("click", () => {
-          let cpf = "";
-          for (let i = 0; i < 11; i++)cpf += getRandomInt(0, 9);
-          if (cpfFormatadoCheck.checked) {
-            cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-          }
-          outputCpf.textContent = cpf;
-          outputCpf.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- Nicks ---------- */
-      const btnGerarNicks = document.getElementById("btn-gerar-nicks");
-      const outputNicks = document.getElementById("output-nicks");
-      const nickKeywordInput = document.getElementById("nick-keyword");
-      const nickQtdInput = document.getElementById("nick-qtd");
-      const nickPrefixes = ["Shadow", "Night", "Cyber", "Iron", "Dark", "Light", ""];
-      const nickSuffixes = ["Hunter", "Blade", "Warrior", "Mage", "Pro", "King", "Queen", ""];
-      if (btnGerarNicks && outputNicks && nickKeywordInput && nickQtdInput) {
-        btnGerarNicks.addEventListener("click", () => {
-          const keyword = nickKeywordInput.value.trim().replace(/\s+/g, "");
-          const qtd = parseInt(nickQtdInput.value) || 5;
-          if (qtd < 1 || qtd > 50) {
-            outputNicks.textContent = "Quantidade deve ser entre 1 e 50.";
-            outputNicks.classList.add("error");
-            return;
-          }
-          let nicks = new Set();
-          const baseWord = keyword || nickSuffixes[getRandomInt(0, nickSuffixes.length - 2)];
-          while (nicks.size < qtd) {
-            let nick = "";
-            const type = getRandomInt(1, 5);
-            const prefix = nickPrefixes[getRandomInt(0, nickPrefixes.length - 1)];
-            const suffix = nickSuffixes[getRandomInt(0, nickSuffixes.length - 1)];
-            const number = getRandomInt(1, 999);
-            switch (type) {
-              case 1: nick = prefix + baseWord + number; break;
-              case 2: nick = baseWord + suffix + "_" + number; break;
-              case 3: nick = prefix + baseWord + suffix; break;
-              case 4: 
-                nick = baseWord
-                  .replace(/a/gi, "4")
-                  .replace(/e/gi, "3")
-                  .replace(/i/gi, "1")
-                  .replace(/o/gi, "0") + number; 
-                break;
-              case 5: nick = baseWord + getRandomInt(10, 99); break;
+        for (let i = 0; i < code.length; i++) {
+          const char = code[i];
+          const prevChar = code[i - 1] || "";
+          if (!insideSingle && !insideDouble && !insideBacktick) {
+            if (char === '"') {
+              insideDouble = true;
+              result += '$$_STRPLACE_' + placeholderIndex + '_$';
+              tokens.push('"');
+              placeholders.push('');
+              placeholderIndex++;
+              continue;
             }
-            if (nick.length > 3 && nick.length < 20) {
-              nicks.add(nick);
+            if (char === "'") {
+              insideSingle = true;
+              result += '$$_STRPLACE_' + placeholderIndex + '_$';
+              tokens.push("'");
+              placeholders.push('');
+              placeholderIndex++;
+              continue;
             }
-            if (nicks.size >= qtd * 5 && nicks.size < qtd) break;
-          }
-          outputNicks.textContent = Array.from(nicks).join("\n");
-          outputNicks.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- Nome ---------- */
-      const btnGerarNome = document.getElementById("btn-gerar-nome");
-      const outputNome = document.getElementById("output-nome");
-      const nomeGeneroSelect = document.getElementById("nome-genero");
-      const firstNamesM = ["Arthur", "Heitor", "Miguel", "Davi", "Gabriel", "Pedro", "Lucas", "Matheus", "Bernardo", "Rafael"];
-      const firstNamesF = ["Alice", "Sophia", "Helena", "Laura", "Manuela", "Valentina", "Isabella", "Heloísa", "Maria Luíza", "Mariana"];
-      const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho"];
-      if (btnGerarNome && outputNome && nomeGeneroSelect) {
-        btnGerarNome.addEventListener("click", () => {
-          const genero = nomeGeneroSelect.value;
-          let firstName = "";
-          if (genero === "masculino") {
-            firstName = firstNamesM[getRandomInt(0, firstNamesM.length - 1)];
-          } else if (genero === "feminino") {
-            firstName = firstNamesF[getRandomInt(0, firstNamesF.length - 1)];
-          } else {
-            const allFirstNames = [...firstNamesM, ...firstNamesF];
-            firstName = allFirstNames[getRandomInt(0, allFirstNames.length - 1)];
-          }
-          const lastName1 = lastNames[getRandomInt(0, lastNames.length - 1)];
-          let lastName2 = lastNames[getRandomInt(0, lastNames.length - 1)];
-          while (lastName2 === lastName1) {
-            lastName2 = lastNames[getRandomInt(0, lastNames.length - 1)];
-          }
-          outputNome.textContent = `${firstName} ${lastName1} ${lastName2}`;
-          outputNome.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- Data de Nascimento ---------- */
-      const btnGerarDataNasc = document.getElementById("btn-gerar-data-nasc");
-      const outputDataNasc = document.getElementById("output-data-nasc");
-      const nascAnoMinInput = document.getElementById("nasc-ano-min");
-      const nascAnoMaxInput = document.getElementById("nasc-ano-max");
-      if (btnGerarDataNasc && outputDataNasc && nascAnoMinInput && nascAnoMaxInput) {
-        btnGerarDataNasc.addEventListener("click", () => {
-          const minYear = parseInt(nascAnoMinInput.value) || 1950;
-          const maxYear = parseInt(nascAnoMaxInput.value) || new Date().getFullYear() - 18;
-          outputDataNasc.classList.remove("success", "error", "warning");
-          if (isNaN(minYear) || isNaN(maxYear) || minYear > maxYear || minYear < 1900 || maxYear > new Date().getFullYear()) {
-            outputDataNasc.textContent = "Erro: Intervalo de anos inválido.";
-            outputDataNasc.classList.add("error");
-            return;
-          }
-          const year = getRandomInt(minYear, maxYear);
-          const month = getRandomInt(1, 12);
-          const daysInMonth = new Date(year, month, 0).getDate();
-          const day = getRandomInt(1, daysInMonth);
-          outputDataNasc.textContent = `${padZero(day, 2)}/${padZero(month, 2)}/${year}`;
-        });
-      }
-
-      /* ---------- Números Aleatórios ---------- */
-      const btnGerarNumeros = document.getElementById("btn-gerar-numeros");
-      const outputNumeros = document.getElementById("output-numeros");
-      if (btnGerarNumeros && outputNumeros) {
-        btnGerarNumeros.addEventListener("click", () => {
-          const minInput = document.getElementById("num-min");
-          const maxInput = document.getElementById("num-max");
-          const qtdInput = document.getElementById("num-qtd");
-          const repetirCheck = document.getElementById("num-repetir");
-          const min = parseInt(minInput.value);
-          const max = parseInt(maxInput.value);
-          const qtd = parseInt(qtdInput.value);
-          const repetir = repetirCheck.checked;
-          outputNumeros.classList.remove("success", "error", "warning");
-          if (isNaN(min) || isNaN(max) || isNaN(qtd)) {
-            outputNumeros.textContent = "Erro: Valores inválidos.";
-            outputNumeros.classList.add("error");
-            return;
-          }
-          if (min > max) {
-            outputNumeros.textContent = "Erro: Mínimo não pode ser maior que Máximo.";
-            outputNumeros.classList.add("error");
-            return;
-          }
-          if (qtd < 1 || qtd > 1000) {
-            outputNumeros.textContent = "Erro: Quantidade deve ser entre 1 e 1000.";
-            outputNumeros.classList.add("error");
-            return;
-          }
-          const rangeSize = max - min + 1;
-          if (!repetir && qtd > rangeSize) {
-            outputNumeros.textContent = `Erro: Impossível gerar ${qtd} números únicos no intervalo de ${rangeSize} números.`;
-            outputNumeros.classList.add("error");
-            return;
-          }
-          const numeros = [];
-          if (repetir) {
-            for (let i = 0; i < qtd; i++) {
-              numeros.push(getRandomInt(min, max));
+            if (char === '`') {
+              insideBacktick = true;
+              result += '$$_STRPLACE_' + placeholderIndex + '_$';
+              tokens.push('`');
+              placeholders.push('');
+              placeholderIndex++;
+              continue;
             }
+            result += char;
           } else {
-            const available = new Set();
-            while (numeros.length < qtd) {
-              const num = getRandomInt(min, max);
-              if (!available.has(num)) {
-                numeros.push(num);
-                available.add(num);
+            if (insideDouble) {
+              if (char === '"' && prevChar !== '\\') {
+                insideDouble = false;
+                continue;
               }
-              if (available.size >= rangeSize && numeros.length < qtd) break;
+              placeholders[placeholderIndex - 1] += char;
+            } else if (insideSingle) {
+              if (char === "'" && prevChar !== '\\') {
+                insideSingle = false;
+                continue;
+              }
+              placeholders[placeholderIndex - 1] += char;
+            } else if (insideBacktick) {
+              if (char === '`' && prevChar !== '\\') {
+                insideBacktick = false;
+                continue;
+              }
+              placeholders[placeholderIndex - 1] += char;
             }
           }
-          outputNumeros.textContent = numeros.join(", ");
-        });
-      }
-
-      /* ---------- PIS/PASEP ---------- */
-      const btnGerarPis = document.getElementById("btn-gerar-pis");
-      const outputPis = document.getElementById("output-pis");
-      const pisFormatadoCheck = document.getElementById("pis-formatado");
-      if (btnGerarPis && outputPis && pisFormatadoCheck) {
-        btnGerarPis.addEventListener("click", () => {
-          let pis = "";
-          for (let i = 0; i < 11; i++)pis += getRandomInt(0, 9);
-          if (pisFormatadoCheck.checked) {
-            pis = pis.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, "$1.$2.$3-$4");
-          }
-          outputPis.textContent = pis;
-          outputPis.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- CNPJ ---------- */
-      const btnGerarCnpj = document.getElementById("btn-gerar-cnpj");
-      const outputCnpj = document.getElementById("output-cnpj");
-      const cnpjFormatadoCheck = document.getElementById("cnpj-formatado");
-      if (btnGerarCnpj && outputCnpj && cnpjFormatadoCheck) {
-        btnGerarCnpj.addEventListener("click", () => {
-          let cnpj = "";
-          for (let i = 0; i < 14; i++)cnpj += getRandomInt(0, 9);
-          if (cnpjFormatadoCheck.checked) {
-            cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
-          }
-          outputCnpj.textContent = cnpj;
-          outputCnpj.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- CEP ---------- */
-      const btnGerarCep = document.getElementById("btn-gerar-cep");
-      const outputCep = document.getElementById("output-cep");
-      const cepFormatadoCheck = document.getElementById("cep-formatado");
-      if (btnGerarCep && outputCep && cepFormatadoCheck) {
-        btnGerarCep.addEventListener("click", () => {
-          let cep = "";
-          for (let i = 0; i < 8; i++)cep += getRandomInt(0, 9);
-          if (cepFormatadoCheck.checked) {
-            cep = cep.replace(/(\d{5})(\d{3})/, "$1-$2");
-          }
-          outputCep.textContent = cep;
-          outputCep.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- RG ---------- */
-      const btnGerarRg = document.getElementById("btn-gerar-rg");
-      const outputRg = document.getElementById("output-rg");
-      const rgUfSelect = document.getElementById("rg-uf");
-      if (btnGerarRg && outputRg && rgUfSelect) {
-        btnGerarRg.addEventListener("click", () => {
-          const uf = rgUfSelect.value;
-          let rg = "";
-          const dv = getRandomInt(0, 9);
-          if (uf === "SP") {
-            for (let i = 0; i < 8; i++)rg += getRandomInt(0, 9);
-            rg = rg.replace(/(\d{2})(\d{3})(\d{3})/, `$1.$2.$3-${dv}`);
-          } else if (uf === "RJ") {
-            for (let i = 0; i < 8; i++)rg += getRandomInt(0, 9);
-            rg = `${rg}-${dv}`;
-          } else {
-            for (let i = 0; i < 9; i++)rg += getRandomInt(0, 9);
-          }
-          outputRg.textContent = rg;
-          outputRg.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- IE ---------- */
-      const btnGerarIe = document.getElementById("btn-gerar-ie");
-      const outputIe = document.getElementById("output-ie");
-      const ieUfSelect = document.getElementById("ie-uf");
-      if (btnGerarIe && outputIe && ieUfSelect) {
-        btnGerarIe.addEventListener("click", () => {
-          const uf = ieUfSelect.value;
-          let ie = "";
-          outputIe.classList.remove("success", "error", "warning");
-          if (uf === "SP") {
-            for (let i = 0; i < 12; i++) ie += getRandomInt(0, 9);
-            ie = ie.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1.$2.$3.$4");
-            outputIe.textContent = ie;
-          } else {
-            ie = "Formato não implementado para esta UF (Exemplo apenas para SP).";
-            outputIe.textContent = ie;
-            outputIe.classList.add("warning");
-          }
-        });
-      }
-
-      /* ---------- Título de Eleitor ---------- */
-      const btnGerarTitulo = document.getElementById("btn-gerar-titulo");
-      const outputTitulo = document.getElementById("output-titulo");
-      const tituloFormatadoCheck = document.getElementById("titulo-formatado");
-      if (btnGerarTitulo && outputTitulo && tituloFormatadoCheck) {
-        btnGerarTitulo.addEventListener("click", () => {
-          let titulo = "";
-          for (let i = 0; i < 12; i++)titulo += getRandomInt(0, 9);
-          if (tituloFormatadoCheck.checked) {
-            titulo = titulo.replace(/(\d{4})(\d{4})(\d{2})(\d{2})/, "$1 $2 $3 $4");
-          }
-          outputTitulo.textContent = titulo;
-          outputTitulo.classList.remove("success", "error", "warning");
-        });
-      }
-
-      /* ---------- Gerador de Senha ---------- */
-      const btnGerarSenha = document.getElementById("btn-gerar-senha");
-      const outputSenha = document.getElementById("output-senha");
-      if (btnGerarSenha && outputSenha) {
-        btnGerarSenha.addEventListener("click", () => {
-          outputSenha.classList.remove("success", "error", "warning");
-          const length = parseInt(document.getElementById("senha-length").value);
-          const includeUpper = document.getElementById("senha-upper").checked;
-          const includeLower = document.getElementById("senha-lower").checked;
-          const includeNumbers = document.getElementById("senha-numbers").checked;
-          const includeSymbols = document.getElementById("senha-symbols").checked;
-
-          if (isNaN(length) || length < 4 || length > 128) {
-            outputSenha.textContent = "Erro: Comprimento inválido (4-128).";
-            outputSenha.classList.add("error");
-            return;
-          }
-          const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-          const lowerChars = "abcdefghijklmnopqrstuvwxyz";
-          const numberChars = "0123456789";
-          const symbolChars = "!@#$%&*()_+-=[]{}|;:,.<>?";
-
-          let charset = "";
-          let requiredChars = "";
-          if (includeUpper) { charset += upperChars; requiredChars += getRandomChar(upperChars); }
-          if (includeLower) { charset += lowerChars; requiredChars += getRandomChar(lowerChars); }
-          if (includeNumbers) { charset += numberChars; requiredChars += getRandomChar(numberChars); }
-          if (includeSymbols) { charset += symbolChars; requiredChars += getRandomChar(symbolChars); }
-          if (!charset) {
-            outputSenha.textContent = "Erro: Selecione ao menos um tipo de caractere.";
-            outputSenha.classList.add("error");
-            return;
-          }
-          if (requiredChars.length > length) {
-            outputSenha.textContent = "Erro: Comprimento menor que os caracteres requeridos.";
-            outputSenha.classList.add("error");
-            return;
-          }
-
-          let password = requiredChars;
-          const remainingLength = length - requiredChars.length;
-          for (let i = 0; i < remainingLength; i++) {
-            password += getRandomChar(charset);
-          }
-          password = password.split("").sort(() => 0.5 - Math.random()).join("");
-          outputSenha.textContent = password;
-        });
-      }
-
-      /* ---------- Gerador PDF ---------- */
-      const btnGerarPdf = document.getElementById("btn-gerar-pdf");
-      const pdfTextContent = document.getElementById("pdf-text-content");
-      const pdfBaseFilename = document.getElementById("pdf-base-filename");
-      const pdfNextCountSpan = document.getElementById("pdf-next-count");
-      let pdfFileCounter = 1;
-      if (btnGerarPdf && pdfTextContent && pdfBaseFilename && pdfNextCountSpan) {
-        pdfNextCountSpan.textContent = pdfFileCounter;
-        btnGerarPdf.addEventListener("click", () => {
-          try {
-            if (typeof jsPDF === "undefined") {
-              alert("Erro: Biblioteca jsPDF não carregada.");
-              return;
-            }
-            const doc = new jsPDF();
-            const text = pdfTextContent.value || "Nenhum conteúdo fornecido.";
-            const baseName = (pdfBaseFilename.value.trim() || "documento")
-              .replace(/[^a-zA-Z0-9_\-\.]/g, "_")
-              .replace(/\s+/g, "_");
-            const filename = `${baseName}_${pdfFileCounter}.pdf`;
-            const lines = doc.splitTextToSize(text, 180);
-            doc.text(lines, 10, 10);
-            doc.save(filename);
-            pdfFileCounter++;
-            pdfNextCountSpan.textContent = pdfFileCounter;
-          } catch (error) {
-            console.error("Erro ao gerar PDF:", error);
-            alert(`Ocorreu um erro ao gerar o PDF: ${error.message}`);
-          }
-        });
-      }
-
-      /* ---------- Minificar Código (Compressor JS/JSON) ---------- */
-      const btnMinificar = document.getElementById("minificador-botao-minificar");
-      const codigoOriginalTextarea = document.getElementById("minificador-codigo-original");
-      const codigoMinificadoTextarea = document.getElementById("minificador-codigo-minificado");
-      const minificadorStatus = document.getElementById("minificador-output-status");
-
-      function minificarCodigo(codigo) {
-        try {
-          codigo = codigo.replace(/\/\/.*$/gm, "");
-          codigo = codigo.replace(/\/\*[\s\S]*?\*\//g, "");
-          codigo = codigo.replace(/\s+/g, " ").trim();
-          codigo = codigo.replace(
-          /\s*([!%&()*+,\-./:;<=>?@[\\\]^_`{|}~])\s*/g,
-          "$1"
-        );
-
-          return codigo;
-        } catch (e) {
-          console.error("Erro ao minificar:", e);
-          return "Erro durante a minificação.";
         }
-      }
+        let withoutComments = result
+          .replace(/\/\/.*$/gm, "")
+          .replace(/\/\*[\s\S]*?\*\//g, "");
+        // Remove espaços em excesso
+        withoutComments = withoutComments.replace(/\s+/g, " ");
+        withoutComments = withoutComments.trim();
 
-      if (btnMinificar && codigoOriginalTextarea && codigoMinificadoTextarea && minificadorStatus) {
-        btnMinificar.addEventListener("click", () => {
-          const codigoOriginal = codigoOriginalTextarea.value;
-          if (!codigoOriginal.trim()) {
-            codigoMinificadoTextarea.value = "";
-            minificadorStatus.textContent = "Nenhum código para minificar.";
-            minificadorStatus.style.display = "block";
-            minificadorStatus.className = "output-area warning";
-            return;
-          }
-          const codigoMinificadoTexto = minificarCodigo(codigoOriginal);
-          codigoMinificadoTextarea.value = codigoMinificadoTexto;
-          if (codigoMinificadoTexto === "Erro durante a minificação.") {
-            minificadorStatus.textContent = "Ocorreu um erro durante a minificação.";
-            minificadorStatus.style.display = "block";
-            minificadorStatus.className = "output-area error";
-          } else {
-            const originalLength = codigoOriginal.length;
-            const minifiedLength = codigoMinificadoTexto.length;
-            const reduction = originalLength > 0 ? ((1 - minifiedLength / originalLength) * 100).toFixed(1) : 0;
-            minificadorStatus.textContent = `Minificado com sucesso! Redução de ${reduction}%.`;
-            minificadorStatus.style.display = "block";
-            minificadorStatus.className = "output-area success";
-          }
-        });
-      }
-
-      /* ---------- Desmimificar ---------- */
-      const botaoDesmimificar = document.getElementById("botao-desmimificar");
-      const desmimificarOriginal = document.getElementById("desmimificar-codigo-original");
-      const desmimificarOutput = document.getElementById("desmimificar-codigo-output");
-      const desmimificarStatus = document.getElementById("status-desmimificar");
-
-      function desmimificarCodigo(txt) {
-        try {
-          const parsed = JSON.parse(txt);
-          return JSON.stringify(parsed, null, 2);
-        } catch (e) {
-          let f = txt;
-          f = f.replace(/;/g, ";\n");
-          f = f.replace(/{/g, "{\n");
-          f = f.replace(/}/g, "\n}\n");
-          return f.trim();
+        // Recoloca as strings
+        for (let i = 0; i < placeholderIndex; i++) {
+          const placeholderRegex = new RegExp('\\$\\$_STRPLACE_' + i + '_\\$');
+          let wrapChar = tokens[i] || '"';
+          let inner = placeholders[i];
+          placeholders[i] = wrapChar + inner + wrapChar;
+          withoutComments = withoutComments.replace(placeholderRegex, placeholders[i]);
         }
+        return withoutComments;
+      } catch (e) {
+        return "Erro durante a minificação.";
       }
+    }
 
-      if (botaoDesmimificar && desmimificarOriginal && desmimificarOutput && desmimificarStatus) {
-        botaoDesmimificar.addEventListener("click", () => {
-          desmimificarStatus.style.display = "none";
-          const cod = desmimificarOriginal.value.trim();
-          if (!cod) {
-            desmimificarOutput.value = "";
-            desmimificarStatus.textContent = "Nenhum código para desmimificar.";
-            desmimificarStatus.className = "output-area error";
-            desmimificarStatus.style.display = "block";
-            return;
-          }
-          const result = desmimificarCodigo(cod);
-          desmimificarOutput.value = result;
-          desmimificarStatus.textContent = "Desmimificado com sucesso!";
-          desmimificarStatus.className = "output-area success";
+    /*****************************************
+     * 3) DESMIMIFICAR (Beautify) JS/JSON    *
+     *****************************************/
+    const botaoDesmimificar = document.getElementById("botao-desmimificar");
+    const desmimificarOriginal = document.getElementById("desmimificar-codigo-original");
+    const desmimificarOutput = document.getElementById("desmimificar-codigo-output");
+    const desmimificarStatus = document.getElementById("status-desmimificar");
+    const indentationTypeSelectDesmimificar = document.getElementById("indentation-type-desmimificar");
+    const indentationSizeInputDesmimificar = document.getElementById("indentation-size-desmimificar");
+
+    if (
+      botaoDesmimificar &&
+      desmimificarOriginal &&
+      desmimificarOutput &&
+      desmimificarStatus &&
+      indentationTypeSelectDesmimificar &&
+      indentationSizeInputDesmimificar
+    ) {
+      botaoDesmimificar.addEventListener("click", () => {
+        desmimificarStatus.style.display = "none";
+        desmimificarOutput.value = "";
+        desmimificarStatus.className = "output-area";
+
+        const cod = desmimificarOriginal.value.trim();
+        if (!cod) {
+          desmimificarStatus.textContent = "Nenhum código para desmimificar.";
           desmimificarStatus.style.display = "block";
-        });
-      }
+          desmimificarStatus.classList.add("error");
+          return;
+        }
 
-      /* ---------- Anotações ---------- */
-      const anotacoesTexto = document.getElementById("anotacoes-texto");
-      const btnSalvarAnotacoes = document.getElementById("btn-salvar-anotacoes");
-      const anotacoesStatus = document.getElementById("anotacoes-status");
-      if (anotacoesTexto && btnSalvarAnotacoes && anotacoesStatus) {
-        function carregarAnotacoes() {
-          const salvas = localStorage.getItem("anotacoesUsuario");
-          if (salvas) {
-            anotacoesTexto.value = salvas;
+        desmimificarStatus.textContent = "Processando...";
+        desmimificarStatus.style.display = "block";
+
+        setTimeout(() => {
+          const indentType = indentationTypeSelectDesmimificar.value;
+          const indentSize = parseInt(indentationSizeInputDesmimificar.value, 10);
+
+          // Primeiro, tenta JSON.parse
+          let result;
+          try {
+            const parsed = JSON.parse(cod);
+            result = JSON.stringify(parsed, null, indentType === 'tabs' ? '\t' : ' '.repeat(indentSize));
+            desmimificarOutput.value = result;
+
+            if (result !== cod) {
+              desmimificarStatus.textContent = "Código JSON formatado com sucesso!";
+              desmimificarStatus.classList.add("success");
+            } else {
+              desmimificarStatus.textContent = "A formatação não alterou o JSON (já estava formatado).";
+              desmimificarStatus.classList.add("info");
+            }
+          } catch (e) {
+            // Não é JSON, formata como JS
+            const beautified = beautifyJSManual(cod, indentType, indentSize);
+            desmimificarOutput.value = beautified;
+
+            if (beautified.trim() !== '' && beautified !== cod) {
+              desmimificarStatus.textContent = "Código JavaScript formatado com sucesso!";
+              desmimificarStatus.classList.add("success");
+            } else if (beautified === cod) {
+              desmimificarStatus.textContent = "A formatação não alterou o código (já estava formatado?).";
+              desmimificarStatus.classList.add("info");
+            } else {
+              desmimificarStatus.textContent = "Não foi possível formatar adequadamente o código.";
+              desmimificarStatus.classList.add("error");
+            }
+          }
+        }, 50);
+      });
+    }
+
+    function beautifyJSManual(code, indentType, indentSizeNum) {
+      let output = '';
+      let indentLevel = 0;
+      const indentSize = parseInt(indentSizeNum, 10) || 2;
+      const indentUnit = indentType === 'tabs' ? '\t' : ' '.repeat(indentSize);
+
+      let inSingleLineComment = false;
+      let inMultiLineComment = false;
+      let inString = false;
+      let stringChar = '';
+      let lastMeaningfulToken = '';
+
+      code = code.replace(/\r\n?/g, '\n').trim();
+      const lines = code.split('\n');
+      let formattedLines = [];
+
+      for (let line of lines) {
+        line = line.trim();
+        if (!line && !inMultiLineComment) {
+          if (
+            formattedLines.length > 0 &&
+            !formattedLines[formattedLines.length - 1].match(/^\s*$/)
+          ) {
+            if (
+              !(
+                formattedLines.length > 1 &&
+                formattedLines[formattedLines.length - 1].match(/^\s*$/) &&
+                formattedLines[formattedLines.length - 2].match(/^\s*$/)
+              )
+            ) {
+              formattedLines.push('');
+            }
+          }
+          continue;
+        }
+
+        let currentFormattedLine = '';
+        let lineIndentPrefix = indentUnit.repeat(indentLevel);
+
+        if (inMultiLineComment) {
+          currentFormattedLine = lineIndentPrefix + line;
+          if (line.includes('*/')) {
+            inMultiLineComment = false;
+          }
+          formattedLines.push(currentFormattedLine);
+          continue;
+        }
+
+        if (
+          line.startsWith('}') ||
+          line.startsWith(')') ||
+          line.startsWith(']') ||
+          line.startsWith('};') ||
+          line.startsWith('});')
+        ) {
+          indentLevel = Math.max(0, indentLevel - 1);
+          lineIndentPrefix = indentUnit.repeat(indentLevel);
+        }
+
+        currentFormattedLine = lineIndentPrefix;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const nextChar = line[i + 1] || '';
+
+          if (inSingleLineComment) {
+            currentFormattedLine += char;
+            continue;
+          }
+          if (inString) {
+            currentFormattedLine += char;
+            if (
+              char === stringChar &&
+              (line[i - 1] !== '\\' ||
+                (line[i - 1] === '\\' && line[i - 2] === '\\'))
+            ) {
+              inString = false;
+            }
+            continue;
+          }
+
+          if (char === '/' && nextChar === '/') {
+            currentFormattedLine += '//';
+            inSingleLineComment = true;
+            currentFormattedLine += line.substring(i + 2);
+            break;
+          }
+          if (char === '/' && nextChar === '*') {
+            currentFormattedLine += '/*';
+            inMultiLineComment = true;
+            i++;
+            lastMeaningfulToken = '/*';
+            continue;
+          }
+          if (char === '"' || char === "'" || char === '`') {
+            currentFormattedLine += char;
+            inString = true;
+            stringChar = char;
+            lastMeaningfulToken = 'string';
+            continue;
+          }
+
+          if (char === '{') {
+            if (
+              currentFormattedLine.trim() !== lineIndentPrefix.trim() &&
+              !currentFormattedLine.endsWith(' ') &&
+              !currentFormattedLine.endsWith('(') &&
+              !currentFormattedLine.endsWith(',')
+            ) {
+              currentFormattedLine += ' ';
+            }
+            currentFormattedLine += char;
+            indentLevel++;
+            lastMeaningfulToken = '{';
+          } else if (char === '}') {
+            currentFormattedLine = currentFormattedLine.trimEnd();
+            currentFormattedLine += '\n' + indentUnit.repeat(Math.max(0, indentLevel - 1));
+            currentFormattedLine += '}';
+            lastMeaningfulToken = '}';
+          } else if (char === ';') {
+            currentFormattedLine = currentFormattedLine.trimEnd() + char;
+            lastMeaningfulToken = ';';
+          } else if (char === '(' || char === '[') {
+            currentFormattedLine += char;
+            lastMeaningfulToken = char;
+          } else if (
+            char.match(/[+\-*/%&|=<>?!:]/) &&
+            nextChar.match(/[+\-*/%&|=<>?!:]/)
+          ) {
+            const operator = char + nextChar;
+            if (
+              line[i + 2] &&
+              (operator + line[i + 2]).match(
+                /===|!==|>>=|<<=|>>>|&&&|\|\|\||\*\*=|&&=|\|\|=|\?\?=|\/\/=|\^\^=/
+              )
+            ) {
+              const longOp = operator + line[i + 2];
+              if (!currentFormattedLine.endsWith(' ')) currentFormattedLine += ' ';
+              currentFormattedLine += longOp;
+              if (line[i + 3] && !line[i + 3].match(/^[\s;(){},]/)) {
+                currentFormattedLine += ' ';
+              }
+              i += 2;
+            } else {
+              if (!currentFormattedLine.endsWith(' ')) currentFormattedLine += ' ';
+              currentFormattedLine += operator;
+              if (line[i + 2] && !line[i + 2].match(/^[\s;(){},=\-+*%/]/)) {
+                currentFormattedLine += ' ';
+              }
+              i += 1;
+            }
+            lastMeaningfulToken = 'operator';
+          } else if (char.match(/[+\-*/%&|=<>?!:]/)) {
+            if (
+              !currentFormattedLine.endsWith(' ') &&
+              !currentFormattedLine.match(/[({[]$/) &&
+              lastMeaningfulToken !== 'operator'
+            ) {
+              if (
+                !(
+                  (char === '+' || char === '-') &&
+                  (lastMeaningfulToken === '' ||
+                    lastMeaningfulToken.match(/[[({=,:]$/))
+                )
+              ) {
+                currentFormattedLine += ' ';
+              }
+            }
+            currentFormattedLine += char;
+            if (
+              nextChar &&
+              !nextChar.match(/^[\s;(){},=\-+*%/]/) &&
+              !currentFormattedLine.endsWith(' ')
+            ) {
+              currentFormattedLine += ' ';
+            }
+            lastMeaningfulToken = 'operator';
+          } else if (char === ',') {
+            currentFormattedLine = currentFormattedLine.trimEnd() + char + ' ';
+            lastMeaningfulToken = ',';
+          } else {
+            currentFormattedLine += char;
+            if (!char.match(/\s/)) {
+              lastMeaningfulToken = char;
+            }
           }
         }
-        carregarAnotacoes();
-        btnSalvarAnotacoes.addEventListener("click", () => {
-          localStorage.setItem("anotacoesUsuario", anotacoesTexto.value);
-          anotacoesStatus.textContent = "Anotações salvas localmente!";
-          anotacoesStatus.className = "output-area success";
-          anotacoesStatus.style.display = "block";
-        });
+        formattedLines.push(currentFormattedLine.trimEnd());
+        inSingleLineComment = false;
+        indentLevel = Math.max(0, indentLevel);
       }
 
-      /* ---------- Modo Dark ---------- */
-      const darkToggle = document.getElementById("dark-toggle");
-      if (darkToggle) {
-        const body = document.body;
-        function loadTheme() {
-          const savedTheme = localStorage.getItem("modoDarkHabilitado");
-          if (savedTheme === "true") {
-            body.setAttribute("data-theme", "dark");
-            darkToggle.checked = true;
-          } else {
-            body.setAttribute("data-theme", "light");
-            darkToggle.checked = false;
+      output = formattedLines.join('\n');
+      output = output.replace(/\n\s*\n(\s*\n)+/g, '\n\n');
+      output = output.split('\n').map(l => l.trimEnd()).join('\n');
+      return output.trim();
+    }
+
+    /************************************************
+     * 4) CORRETOR DE ENCODING DE TEXTO (UTF-8)      *
+     ************************************************/
+    const correctButton = document.getElementById("correctButton");
+    const inputText = document.getElementById("inputText");
+    const outputText = document.getElementById("outputText");
+    const statusArea = document.getElementById("statusArea");
+    const statusMessage = document.getElementById("statusMessage");
+    if (correctButton && inputText && outputText && statusArea && statusMessage) {
+      correctButton.addEventListener("click", () => {
+        const originalStr = inputText.value;
+        if (!originalStr) {
+          statusMessage.textContent = "Não há texto para corrigir.";
+          statusArea.style.display = "block";
+          statusArea.className = "output-area warning";
+          return;
+        }
+        // Exibir status "processando"
+        statusMessage.textContent = "Processando correção...";
+        statusArea.style.display = "block";
+        statusArea.className = "output-area info";
+
+        setTimeout(() => {
+          try {
+            // Exemplo de correção dupla:
+            // 1) Tentar decodificar como se fosse ISO-8859-1 (ou Windows-1252)
+            // 2) Gerar string em UTF-8
+            // Este é um exemplo simplificado. Pode-se usar libs ou heurísticas mais avançadas.
+
+            // Função simples de substituição manual de caracteres típicos de erros
+            let corrected = fixCommonEncodingErrors(originalStr);
+
+            outputText.value = corrected;
+            statusMessage.textContent = "Texto corrigido com sucesso!";
+            statusArea.className = "output-area success";
+          } catch (err) {
+            statusMessage.textContent = "Erro ao tentar corrigir: " + err;
+            statusArea.className = "output-area error";
+          }
+        }, 100);
+      });
+    }
+
+    function fixCommonEncodingErrors(str) {
+      let fixed = str;
+      fixed = fixed.replace(/Ã¡/g, "á");
+      fixed = fixed.replace(/Ã©/g, "é");
+      fixed = fixed.replace(/Ã³/g, "ó");
+      fixed = fixed.replace(/Ãº/g, "ú");
+      fixed = fixed.replace(/Ã­/g, "í");
+      fixed = fixed.replace(/Ã¢/g, "â");
+      fixed = fixed.replace(/Ãª/g, "ê");
+      fixed = fixed.replace(/Ãô/g, "ô");
+      fixed = fixed.replace(/Ãà/g, "à");
+      fixed = fixed.replace(/Ãã/g, "ã");
+      fixed = fixed.replace(/Ãõ/g, "õ");
+      fixed = fixed.replace(/Ã±/g, "ñ");
+      fixed = fixed.replace(/Ã¼/g, "ü");
+      fixed = fixed.replace(/Ã§/g, "ç");
+      fixed = fixed.replace(/ÃÀ/g, "À");
+      fixed = fixed.replace(/ÃÁ/g, "Á");
+      fixed = fixed.replace(/ÃÂ/g, "Â");
+      fixed = fixed.replace(/ÃÃ/g, "Ã");
+      fixed = fixed.replace(/ÃÉ/g, "É");
+      fixed = fixed.replace(/ÃÊ/g, "Ê");
+      fixed = fixed.replace(/ÃÍ/g, "Í");
+      fixed = fixed.replace(/ÃÓ/g, "Ó");
+      fixed = fixed.replace(/ÃÔ/g, "Ô");
+      fixed = fixed.replace(/ÃÕ/g, "Õ");
+      fixed = fixed.replace(/ÃÚ/g, "Ú");
+      fixed = fixed.replace(/ÃÛ/g, "Û");
+      fixed = fixed.replace(/ÃÜ/g, "Ü");
+      fixed = fixed.replace(/ÃÇ/g, "Ç");
+      fixed = fixed.replace(/â€œ/g, "“");
+      fixed = fixed.replace(/â€/g, "”");
+      fixed = fixed.replace(/â€˜/g, "‘");
+      fixed = fixed.replace(/â€™/g, "’");
+      fixed = fixed.replace(/â€¦/g, "…");
+      fixed = fixed.replace(/â€“/g, "–");
+      fixed = fixed.replace(/â€”/g, "—");
+      fixed = fixed.replace(/ÃƒÂ¡/g, "á"); // á (Ã¡ -> ÃƒÂ¡)
+      fixed = fixed.replace(/ÃƒÂ¢/g, "â"); // â (Ã¢ -> ÃƒÂ¢)
+      fixed = fixed.replace(/ÃƒÂ£/g, "ã"); // ã (Ã£ -> ÃƒÂ£)
+      fixed = fixed.replace(/ÃƒÂ¤/g, "ä"); // ä (Ã¤ -> ÃƒÂ¤)
+      fixed = fixed.replace(/ÃƒÂ¥/g, "å"); // å (Ã¥ -> ÃƒÂ¥)
+      fixed = fixed.replace(/ÃƒÂ¦/g, "æ"); // æ (Ã¦ -> ÃƒÂ¦)
+      fixed = fixed.replace(/ÃƒÂ§/g, "ç"); // ç (Ã§ -> ÃƒÂ§)
+      fixed = fixed.replace(/ÃƒÂ¨/g, "è"); // è (Ã¨ -> ÃƒÂ¨)
+      fixed = fixed.replace(/ÃƒÂ©/g, "é"); // é (Ã© -> ÃƒÂ©)
+      fixed = fixed.replace(/ÃƒÂª/g, "ê"); // ê (Ãª -> ÃƒÂª)
+      fixed = fixed.replace(/ÃƒÂ«/g, "ë"); // ë (Ã« -> ÃƒÂ«)
+      fixed = fixed.replace(/ÃƒÂ¬/g, "ì"); // ì (Ã¬ -> ÃƒÂ¬)
+      fixed = fixed.replace(/ÃƒÂ­/g, "í"); // í (Ã­ -> ÃƒÂ­)
+      fixed = fixed.replace(/ÃƒÂ®/g, "î"); // î (Ã® -> ÃƒÂ®)
+      fixed = fixed.replace(/ÃƒÂ¯/g, "ï"); // ï (Ã¯ -> ÃƒÂ¯)
+      fixed = fixed.replace(/ÃƒÂ°/g, "ð"); // ð (Ã° -> ÃƒÂ°)
+      fixed = fixed.replace(/ÃƒÂ±/g, "ñ"); // ñ (Ã± -> ÃƒÂ±)
+      fixed = fixed.replace(/ÃƒÂ²/g, "ò"); // ò (Ã² -> ÃƒÂ²)
+      fixed = fixed.replace(/ÃƒÂ³/g, "ó"); // ó (Ã³ -> ÃƒÂ³)
+      fixed = fixed.replace(/ÃƒÂ´/g, "ô"); // ô (Ã´ -> ÃƒÂ´)
+      fixed = fixed.replace(/ÃƒÂµ/g, "õ"); // õ (Ãµ -> ÃƒÂµ)
+      fixed = fixed.replace(/ÃƒÂ¶/g, "ö"); // ö (Ã¶ -> ÃƒÂ¶)
+      fixed = fixed.replace(/ÃƒÂ·/g, "÷"); // ÷ (Ã· -> ÃƒÂ·)
+      fixed = fixed.replace(/ÃƒÂ¸/g, "ø"); // ø (Ã¸ -> ÃƒÂ¸)
+      fixed = fixed.replace(/ÃƒÂ¹/g, "ù"); // ù (Ã¹ -> ÃƒÂ¹)
+      fixed = fixed.replace(/ÃƒÂº/g, "ú"); // ú (Ãº -> ÃƒÂº)
+      fixed = fixed.replace(/ÃƒÂ»/g, "û"); // û (Ã» -> ÃƒÂ»)
+      fixed = fixed.replace(/ÃƒÂ¼/g, "ü"); // ü (Ã¼ -> ÃƒÂ¼)
+      fixed = fixed.replace(/ÃƒÂ½/g, "ý"); // ý (Ã½ -> ÃƒÂ½)
+      fixed = fixed.replace(/ÃƒÂ¾/g, "þ"); // þ (Ã¾ -> ÃƒÂ¾)
+      fixed = fixed.replace(/ÃƒÂ¿/g, "ÿ"); // ÿ (Ã¿ -> ÃƒÂ¿)
+      fixed = fixed.replace(/ÃƒÂ\u00A0/g, "à"); // à (de Ã\u00A0 -> ÃƒÂ\u00A0)
+      fixed = fixed.replace(/Ãƒâ‚¬/g, "À"); // À (Ã€ -> Ãƒâ‚¬)
+      fixed = fixed.replace(/ÃƒÂ\u0081/g, "Á"); // Á (Ã\u0081 -> ÃƒÂ\u0081)
+      fixed = fixed.replace(/Ãƒâ€š/g, "Â"); // Â (Ã‚ -> Ãƒâ€š)
+      fixed = fixed.replace(/ÃƒÆ’/g, "Ã");   // Ã (Ãƒ -> ÃƒÆ’)
+      fixed = fixed.replace(/Ãƒâ€ž/g, "Ä"); // Ä (Ã„ -> Ãƒâ€ž)
+      fixed = fixed.replace(/Ãƒâ€¦/g, "Å"); // Å (Ã… -> Ãƒâ€¦)
+      fixed = fixed.replace(/Ãƒâ€ /g, "Æ");  // Æ (Ã† -> Ãƒâ€ )
+      fixed = fixed.replace(/Ãƒâ€¡/g, "Ç"); // Ç (Ã‡ -> Ãƒâ€¡)
+      fixed = fixed.replace(/ÃƒË†/g, "È");   // È (Ãˆ -> ÃƒË†)
+      fixed = fixed.replace(/Ãƒâ€°/g, "É"); // É (Ã‰ -> Ãƒâ€°)
+      fixed = fixed.replace(/ÃƒÅScaron;/g, "Ê"); // Ê (ÃŠ -> ÃƒÅScaron;)
+      fixed = fixed.replace(/Ãƒâ€¹/g, "Ë"); // Ë (Ã‹ -> Ãƒâ€¹)
+      fixed = fixed.replace(/ÃƒÅ’/g, "Ì");   // Ì (ÃŒ -> ÃƒÅ’)
+      fixed = fixed.replace(/ÃƒÂ\u008D/g, "Í"); // Í (Ã\u008D -> ÃƒÂ\u008D)
+      fixed = fixed.replace(/ÃƒÅ½/g, "Î");   // Î (ÃŽ -> ÃƒÅ½)
+      fixed = fixed.replace(/ÃƒÂ\u008F/g, "Ï"); // Ï (Ã\u008F -> ÃƒÂ\u008F)
+      fixed = fixed.replace(/ÃƒÂ\u0090/g, "Ð"); // Ð (Ã\u0090 -> ÃƒÂ\u0090)
+      fixed = fixed.replace(/Ãƒâ€˜/g, "Ñ"); // Ñ (Ã‘ -> Ãƒâ€˜)
+      fixed = fixed.replace(/Ãƒâ€™/g, "Ò"); // Ò (Ã’ -> Ãƒâ€™)
+      fixed = fixed.replace(/Ãƒâ€œ/g, "Ó"); // Ó (Ã“ -> Ãƒâ€œ)
+      fixed = fixed.replace(/Ãƒâ€\u009D/g, "Ô"); // Ô (Ã” -> Ãƒâ€ ). 
+      fixed = fixed.replace(/Ãƒâ€¢/g, "Õ"); // Õ (Ã• -> Ãƒâ€¢)
+      fixed = fixed.replace(/Ãƒâ€“/g, "Ö"); // Ö (Ã– -> Ãƒâ€“)
+      fixed = fixed.replace(/Ãƒâ€”/g, "×"); // × (Ã— -> Ãƒâ€”)
+      fixed = fixed.replace(/ÃƒËœ/g, "Ø");   // Ø (Ã˜ -> ÃƒËœ)
+      fixed = fixed.replace(/Ãƒâ„¢/g, "Ù"); // Ù (Ã™ -> Ãƒâ„¢)
+      fixed = fixed.replace(/ÃƒÅ¡/g, "Ú");   // Ú (Ãš -> ÃƒÅ¡)
+      fixed = fixed.replace(/Ãƒâ€º/g, "Û"); // Û (Ã› -> Ãƒâ€º)
+      fixed = fixed.replace(/ÃƒÅ“/g, "Ü");   // Ü (Ãœ -> ÃƒÅ“)
+      fixed = fixed.replace(/ÃƒÂ\u009D/g, "Ý"); // Ý (Ã\u009D -> ÃƒÂ\u009D)
+      fixed = fixed.replace(/ÃƒÅ¾/g, "Þ");   // Þ (Ãž -> ÃƒÅ¾)
+      fixed = fixed.replace(/ÃƒÅ¸/g, "ß");
+      fixed = fixed.replace(/ÃƒÃ\u00A0/g, "à");
+      fixed = fixed.replace(/Ã¡/g, "á"); // á (originalmente Ã¡, onde ¡ é U+00A1)
+      fixed = fixed.replace(/Ã©/g, "é"); // é (originalmente Ã©, onde © é U+00A9)
+      fixed = fixed.replace(/Ã­/g, "í"); // í (originalmente Ã­, onde ­ (SHY) é U+00AD)
+      fixed = fixed.replace(/Ã³/g, "ó"); // ó (originalmente Ã³, onde ³ é U+00B3)
+      fixed = fixed.replace(/Ãº/g, "ú"); // ú (originalmente Ãº, onde º é U+00BA)
+      fixed = fixed.replace(/Ã¢/g, "â"); // â (originalmente Ã¢, onde ¢ é U+00A2)
+      fixed = fixed.replace(/Ãª/g, "ê"); // ê (originalmente Ãª, onde ª é U+00AA)
+      fixed = fixed.replace(/Ãô/g, "ô"); // ô (originalmente Ã´, onde ´ é U+00B4)
+      fixed = fixed.replace(/Ãà/g, "à"); // à (caso específico do usuário: Ã seguido do caractere à U+00E0)
+      fixed = fixed.replace(/Ãã/g, "ã"); // ã (originalmente Ã£, onde £ é U+00A3)
+      fixed = fixed.replace(/Ãµ/g, "õ"); // õ (originalmente Ãµ, onde µ é U+00B5)
+      fixed = fixed.replace(/Ã±/g, "ñ"); // ñ (originalmente Ã±, onde ± é U+00B1)
+      fixed = fixed.replace(/Ã¼/g, "ü"); // ü (originalmente Ã¼, onde ¼ é U+00BC)
+
+      // Subgrupo 2.2: Adições para minúsculas PT-BR e outros comuns (ISO-8859-1)
+      fixed = fixed.replace(/Ã\u00A0/g, "à"); // à (comum: Ã seguido de Non-Breaking Space U+00A0)
+      fixed = fixed.replace(/Ã§/g, "ç"); // ç (Ã§, onde § é U+00A7)
+      fixed = fixed.replace(/Ã¨/g, "è"); // è (Ã¨, onde ¨ é U+00A8)
+      fixed = fixed.replace(/Ã«/g, "ë"); // ë (Ã«, onde « é U+00AB)
+      fixed = fixed.replace(/Ã¬/g, "ì"); // ì (Ã¬, onde ¬ é U+00AC)
+      fixed = fixed.replace(/Ã®/g, "î"); // î (Ã®, onde ® é U+00AE)
+      fixed = fixed.replace(/Ã¯/g, "ï"); // ï (Ã¯, onde ï é U+00EF)
+      fixed = fixed.replace(/Ã°/g, "ð"); // ð (Ã°, onde ° é U+00B0)
+      fixed = fixed.replace(/Ã²/g, "ò"); // ò (Ã², onde ² é U+00B2)
+      fixed = fixed.replace(/Ã¶/g, "ö"); // ö (Ã¶, onde ö é U+00F6)
+      fixed = fixed.replace(/Ã·/g, "÷"); // ÷ (Ã·, onde · é U+00B7)
+      fixed = fixed.replace(/Ã¸/g, "ø"); // ø (Ã¸, onde ø é U+00F8)
+      fixed = fixed.replace(/Ã¹/g, "ù"); // ù (Ã¹, onde ¹ é U+00B9)
+      fixed = fixed.replace(/Ã»/g, "û"); // û (Ã», onde » é U+00BB)
+      // Ã¼ já está acima
+      fixed = fixed.replace(/Ã½/g, "ý"); // ý (Ã½, onde ý é U+00FD)
+      fixed = fixed.replace(/Ã¾/g, "þ"); // þ (Ã¾, onde þ é U+00FE)
+      fixed = fixed.replace(/Ã¿/g, "ÿ"); // ÿ (Ã¿, onde ¿ é U+00BF)
+      fixed = fixed.replace(/Ã¤/g, "ä"); // ä (Ã¤, onde ä é U+00E4)
+      fixed = fixed.replace(/Ã¥/g, "å"); // å (Ã¥, onde å é U+00E5)
+      fixed = fixed.replace(/Ã¦/g, "æ"); // æ (Ãæ, onde æ é U+00E6)
+
+
+      // Subgrupo 2.3: Adições para maiúsculas PT-BR e outros (Windows-1252)
+      // (Ã seguido por caractere da faixa 0x80-0x9F do Windows-1252)
+      fixed = fixed.replace(/Ã€/g, "À"); // À (Ã seguido de € U+20AC, que é 0x80 em Win-1252)
+      fixed = fixed.replace(/Ã\u0081/g, "Á"); // Á (Ã seguido de char code 0x81 U+0081)
+      fixed = fixed.replace(/Ã‚/g, "Â"); // Â (Ã seguido de ‚ U+201A, que é 0x82 em Win-1252)
+      fixed = fixed.replace(/Ãƒ/g, "Ã");   // Ã (Ã seguido de ƒ U+0192, que é 0x83 em Win-1252)
+      fixed = fixed.replace(/Ã„/g, "Ä"); // Ä (Ã seguido de „ U+201E, que é 0x84 em Win-1252)
+      fixed = fixed.replace(/Ã…/g, "Å"); // Å (Ã seguido de … U+2026, que é 0x85 em Win-1252)
+      fixed = fixed.replace(/Ã†/g, "Æ"); // Æ (Ã seguido de † U+2020, que é 0x86 em Win-1252)
+      fixed = fixed.replace(/Ã‡/g, "Ç"); // Ç (Ã seguido de ‡ U+2021, que é 0x87 em Win-1252)
+      fixed = fixed.replace(/Ãˆ/g, "È"); // È (Ã seguido de ˆ U+02C6, que é 0x88 em Win-1252)
+      fixed = fixed.replace(/Ã‰/g, "É"); // É (Ã seguido de ‰ U+2030, que é 0x89 em Win-1252)
+      fixed = fixed.replace(/ÃŠ/g, "Ê"); // Ê (Ã seguido de Š U+0160, que é 0x8A em Win-1252)
+      fixed = fixed.replace(/Ã‹/g, "Ë"); // Ë (Ã seguido de ‹ U+2039, que é 0x8B em Win-1252)
+      fixed = fixed.replace(/ÃŒ/g, "Ì"); // Ì (Ã seguido de Œ U+0152, que é 0x8C em Win-1252)
+      fixed = fixed.replace(/Ã\u008D/g, "Í"); // Í (Ã seguido de char code 0x8D U+008D)
+      fixed = fixed.replace(/ÃŽ/g, "Î"); // Î (Ã seguido de Ž U+017D, que é 0x8E em Win-1252)
+      fixed = fixed.replace(/Ã\u008F/g, "Ï"); // Ï (Ã seguido de char code 0x8F U+008F)
+      fixed = fixed.replace(/Ã\u0090/g, "Ð"); // Ð (Ã seguido de char code 0x90 U+0090)
+      fixed = fixed.replace(/Ã‘/g, "Ñ"); // Ñ (Ã seguido de ‘ U+2018, que é 0x91 em Win-1252)
+      fixed = fixed.replace(/Ã’/g, "Ò"); // Ò (Ã seguido de ’ U+2019, que é 0x92 em Win-1252)
+      fixed = fixed.replace(/Ã“/g, "Ó"); // Ó (Ã seguido de “ U+201C, que é 0x93 em Win-1252)
+      fixed = fixed.replace(/Ã”/g, "Ô"); // Ô (Ã seguido de ” U+201D, que é 0x94 em Win-1252)
+      fixed = fixed.replace(/Ã•/g, "Õ"); // Õ (Ã seguido de • U+2022, que é 0x95 em Win-1252)
+      fixed = fixed.replace(/Ã–/g, "Ö"); // Ö (Ã seguido de – U+2013, que é 0x96 em Win-1252)
+      fixed = fixed.replace(/Ã—/g, "×"); // × (Ã seguido de — U+2014, que é 0x97 em Win-1252)
+      fixed = fixed.replace(/Ã˜/g, "Ø"); // Ø (Ã seguido de ˜ U+02DC, que é 0x98 em Win-1252)
+      fixed = fixed.replace(/Ã™/g, "Ù"); // Ù (Ã seguido de ™ U+2122, que é 0x99 em Win-1252)
+      fixed = fixed.replace(/Ãš/g, "Ú"); // Ú (Ã seguido de š U+0161, que é 0x9A em Win-1252)
+      fixed = fixed.replace(/Ã›/g, "Û"); // Û (Ã seguido de › U+203A, que é 0x9B em Win-1252)
+      fixed = fixed.replace(/Ãœ/g, "Ü"); // Ü (Ã seguido de œ U+0153, que é 0x9C em Win-1252)
+      fixed = fixed.replace(/Ã\u009D/g, "Ý"); // Ý (Ã seguido de char code 0x9D U+009D)
+      fixed = fixed.replace(/Ãž/g, "Þ"); // Þ (Ã seguido de ž U+017E, que é 0x9E em Win-1252)
+      fixed = fixed.replace(/ÃŸ/g, "ß"); // ß (Ã seguido de Ÿ U+0178, que é 0x9F em Win-1252)
+
+      return fixed;
+    }
+
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function padZero(num, size) {
+      let s = String(num);
+      while (s.length < size) s = "0" + s;
+      return s;
+    }
+    function getRandomChar(str) {
+      return str[Math.floor(Math.random() * str.length)];
+    }
+
+    // CNH
+    const btnGerarCnh = document.getElementById("btn-gerar-cnh");
+    const outputCnh = document.getElementById("output-cnh");
+    if (btnGerarCnh && outputCnh) {
+      btnGerarCnh.addEventListener("click", () => {
+        let cnh = "";
+        for (let i = 0; i < 11; i++) {
+          cnh += getRandomInt(0, 9);
+        }
+        const validYear = new Date().getFullYear() + getRandomInt(2, 7);
+        const validMonth = getRandomInt(1, 12);
+        const validDay = getRandomInt(1, 28);
+        const categories = ["A", "B", "AB", "C", "D", "E", "AC", "AD", "AE"];
+        const category = categories[getRandomInt(0, categories.length - 1)];
+        outputCnh.textContent =
+          "Número CNH (Inválido): " + cnh +
+          "\nValidade (Fictícia): " + padZero(validDay, 2) + "/" + padZero(validMonth, 2) + "/" + validYear +
+          "\nCategoria (Aleatória): " + category;
+        outputCnh.className = "output-area";
+        outputCnh.style.display = "block";
+      });
+    }
+
+    // Bancos
+    const sampleBanks = [
+      { code: "001", name: "Banco do Brasil" },
+      { code: "237", name: "Bradesco" },
+      { code: "341", name: "Itaú Unibanco" },
+      { code: "104", name: "Caixa Econômica Federal" },
+      { code: "033", name: "Santander" },
+      { code: "745", name: "Citibank" },
+      { code: "260", name: "Nu Pagamentos (Nubank)" },
+      { code: "077", name: "Banco Inter" },
+      { code: "336", name: "Banco C6" },
+    ];
+
+    let banksPopulated = false;
+    function populateBankSelect() {
+      const contaBancoSelect = document.getElementById("conta-banco-select");
+      if (!contaBancoSelect || banksPopulated) return;
+      while (contaBancoSelect.options.length > 1) {
+        contaBancoSelect.remove(1);
+      }
+      sampleBanks.forEach(bank => {
+        const option = document.createElement("option");
+        option.value = bank.code;
+        option.textContent = `${bank.code}-${bank.name}`;
+        contaBancoSelect.appendChild(option);
+      });
+      banksPopulated = true;
+    }
+    populateBankSelect();
+
+    const btnGerarConta = document.getElementById("btn-gerar-conta");
+    const outputConta = document.getElementById("output-conta");
+    if (btnGerarConta && outputConta) {
+      btnGerarConta.addEventListener("click", () => {
+        outputConta.className = "output-area";
+        outputConta.style.display = "block";
+
+        const contaBancoSelect = document.getElementById("conta-banco-select");
+        let selectedBankCode = contaBancoSelect.value;
+        let bank;
+        if (selectedBankCode) {
+          bank = sampleBanks.find(b => b.code === selectedBankCode);
+        } else {
+          bank = sampleBanks[getRandomInt(0, sampleBanks.length - 1)];
+        }
+        if (!bank) {
+          bank = { code: "000", name: "Banco Desconhecido" };
+        }
+        const agencia = padZero(getRandomInt(1, 9999), 4);
+        const contaNum = padZero(getRandomInt(1000, 999999), 6);
+        const contaDv = getRandomInt(0, 9);
+        outputConta.textContent =
+          `Banco: ${bank.code}-${bank.name}\nAgência: ${agencia}\nConta: ${contaNum}-${contaDv}`;
+      });
+    }
+
+    // CPF
+    const btnGerarCpf = document.getElementById("btn-gerar-cpf");
+    const outputCpf = document.getElementById("output-cpf");
+    const cpfFormatadoCheck = document.getElementById("cpf-formatado");
+    if (btnGerarCpf && outputCpf && cpfFormatadoCheck) {
+      btnGerarCpf.addEventListener("click", () => {
+        outputCpf.className = "output-area";
+        outputCpf.style.display = "block";
+
+        let cpf = "";
+        for (let i = 0; i < 11; i++) {
+          cpf += getRandomInt(0, 9);
+        }
+        if (cpfFormatadoCheck.checked) {
+          cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        }
+        outputCpf.textContent = cpf;
+      });
+    }
+
+    // Nicks
+    const btnGerarNicks = document.getElementById("btn-gerar-nicks");
+    const outputNicks = document.getElementById("output-nicks");
+    const nickKeywordInput = document.getElementById("nick-keyword");
+    const nickQtdInput = document.getElementById("nick-qtd");
+    const nickPrefixes = ["Shadow", "Night", "Cyber", "Iron", "Dark", "Light", ""];
+    const nickSuffixes = ["Hunter", "Blade", "Warrior", "Mage", "Pro", "King", "Queen", ""];
+    if (btnGerarNicks && outputNicks && nickKeywordInput && nickQtdInput) {
+      btnGerarNicks.addEventListener("click", () => {
+        outputNicks.className = "output-area large";
+        outputNicks.style.display = "block";
+
+        const keyword = nickKeywordInput.value.trim().replace(/\s+/g, "");
+        const qtd = parseInt(nickQtdInput.value) || 5;
+        if (qtd < 1 || qtd > 50) {
+          outputNicks.textContent = "Quantidade deve ser entre 1 e 50.";
+          outputNicks.classList.add("error");
+          return;
+        }
+        let nicks = new Set();
+        const baseWord = keyword || nickSuffixes[getRandomInt(0, nickSuffixes.length - 2)];
+        while (nicks.size < qtd) {
+          let nick = "";
+          const type = getRandomInt(1, 5);
+          const prefix = nickPrefixes[getRandomInt(0, nickPrefixes.length - 1)];
+          const suffix = nickSuffixes[getRandomInt(0, nickSuffixes.length - 1)];
+          const number = getRandomInt(1, 999);
+          switch (type) {
+            case 1: nick = prefix + baseWord + number; break;
+            case 2: nick = baseWord + suffix + "_" + number; break;
+            case 3: nick = prefix + baseWord + suffix; break;
+            case 4:
+              nick = baseWord
+                .replace(/a/gi, "4")
+                .replace(/e/gi, "3")
+                .replace(/i/gi, "1")
+                .replace(/o/gi, "0")
+                + number;
+              break;
+            case 5: nick = baseWord + getRandomInt(10, 99); break;
+          }
+          if (nick.length > 3 && nick.length < 20) {
+            nicks.add(nick);
+          }
+          if (nicks.size >= qtd * 5 && nicks.size < qtd) {
+            break;
           }
         }
-        loadTheme();
-        darkToggle.addEventListener("change", () => {
-          if (darkToggle.checked) {
-            body.setAttribute("data-theme", "dark");
-            localStorage.setItem("modoDarkHabilitado", "true");
-          } else {
-            body.setAttribute("data-theme", "light");
-            localStorage.setItem("modoDarkHabilitado", "false");
+        outputNicks.textContent = Array.from(nicks).join("\n");
+      });
+    }
+
+    // Nome
+    const btnGerarNome = document.getElementById("btn-gerar-nome");
+    const outputNome = document.getElementById("output-nome");
+    const nomeGeneroSelect = document.getElementById("nome-genero");
+    const firstNamesM = ["Arthur", "Heitor", "Miguel", "Davi", "Gabriel", "Pedro", "Lucas", "Matheus", "Bernardo", "Rafael"];
+    const firstNamesF = ["Alice", "Sophia", "Helena", "Laura", "Manuela", "Valentina", "Isabella", "Heloísa", "Maria Luíza", "Mariana"];
+    const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho"];
+    if (btnGerarNome && outputNome && nomeGeneroSelect) {
+      btnGerarNome.addEventListener("click", () => {
+        outputNome.className = "output-area";
+        outputNome.style.display = "block";
+
+        const genero = nomeGeneroSelect.value;
+        let firstName = "";
+        if (genero === "masculino") {
+          firstName = firstNamesM[getRandomInt(0, firstNamesM.length - 1)];
+        } else if (genero === "feminino") {
+          firstName = firstNamesF[getRandomInt(0, firstNamesF.length - 1)];
+        } else {
+          const allFirstNames = [...firstNamesM, ...firstNamesF];
+          firstName = allFirstNames[getRandomInt(0, allFirstNames.length - 1)];
+        }
+        const lastName1 = lastNames[getRandomInt(0, lastNames.length - 1)];
+        let lastName2 = lastNames[getRandomInt(0, lastNames.length - 1)];
+        while (lastName2 === lastName1) {
+          lastName2 = lastNames[getRandomInt(0, lastNames.length - 1)];
+        }
+        outputNome.textContent = `${firstName} ${lastName1} ${lastName2}`;
+      });
+    }
+
+    // Data Nasc
+    const btnGerarDataNasc = document.getElementById("btn-gerar-data-nasc");
+    const outputDataNasc = document.getElementById("output-data-nasc");
+    const nascAnoMinInput = document.getElementById("nasc-ano-min");
+    const nascAnoMaxInput = document.getElementById("nasc-ano-max");
+    if (btnGerarDataNasc && outputDataNasc && nascAnoMinInput && nascAnoMaxInput) {
+      btnGerarDataNasc.addEventListener("click", () => {
+        outputDataNasc.className = "output-area";
+        outputDataNasc.style.display = "block";
+
+        const minYear = parseInt(nascAnoMinInput.value) || 1950;
+        const maxYear = parseInt(nascAnoMaxInput.value) || new Date().getFullYear() - 18;
+        if (isNaN(minYear) || isNaN(maxYear) || minYear > maxYear || minYear < 1900 || maxYear > new Date().getFullYear()) {
+          outputDataNasc.textContent = "Erro: Intervalo de anos inválido.";
+          outputDataNasc.classList.add("error");
+          return;
+        }
+        const year = getRandomInt(minYear, maxYear);
+        const month = getRandomInt(1, 12);
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const day = getRandomInt(1, daysInMonth);
+        outputDataNasc.textContent = `${padZero(day, 2)}/${padZero(month, 2)}/${year}`;
+      });
+    }
+
+    // Números Aleatórios
+    const btnGerarNumeros = document.getElementById("btn-gerar-numeros");
+    const outputNumeros = document.getElementById("output-numeros");
+    if (btnGerarNumeros && outputNumeros) {
+      btnGerarNumeros.addEventListener("click", () => {
+        outputNumeros.className = "output-area";
+        outputNumeros.style.display = "block";
+
+        const minInput = document.getElementById("num-min");
+        const maxInput = document.getElementById("num-max");
+        const qtdInput = document.getElementById("num-qtd");
+        const repetirCheck = document.getElementById("num-repetir");
+        const min = parseInt(minInput.value);
+        const max = parseInt(maxInput.value);
+        const qtd = parseInt(qtdInput.value);
+        const repetir = repetirCheck.checked;
+        if (isNaN(min) || isNaN(max) || isNaN(qtd)) {
+          outputNumeros.textContent = "Erro: Valores inválidos.";
+          outputNumeros.classList.add("error");
+          return;
+        }
+        if (min > max) {
+          outputNumeros.textContent = "Erro: Mínimo não pode ser maior que Máximo.";
+          outputNumeros.classList.add("error");
+          return;
+        }
+        if (qtd < 1 || qtd > 1000) {
+          outputNumeros.textContent = "Erro: Quantidade deve ser entre 1 e 1000.";
+          outputNumeros.classList.add("error");
+          return;
+        }
+        const rangeSize = max - min + 1;
+        if (!repetir && qtd > rangeSize) {
+          outputNumeros.textContent =
+            `Erro: Impossível gerar ${qtd} números únicos no intervalo de ${rangeSize} números.`;
+          outputNumeros.classList.add("error");
+          return;
+        }
+        const numeros = [];
+        if (repetir) {
+          for (let i = 0; i < qtd; i++) {
+            numeros.push(getRandomInt(min, max));
           }
-        });
-      }
+        } else {
+          const available = new Set();
+          while (numeros.length < qtd) {
+            const num = getRandomInt(min, max);
+            if (!available.has(num)) {
+              numeros.push(num);
+              available.add(num);
+            }
+            if (available.size >= rangeSize && numeros.length < qtd) {
+              break;
+            }
+          }
+        }
+        outputNumeros.textContent = numeros.join(", ");
+      });
+    }
 
-      /* ---------- BPMN FIX ---------- */
-      const bpmnFixButton = document.getElementById("bpmnFixButton");
-      const bpmnFixInput = document.getElementById("bpmnFixInput");
-      const bpmnFixOutput = document.getElementById("bpmnFixOutput");
-      const bpmnFixStatus = document.getElementById("bpmnFixStatus");
+    // PIS/PASEP
+    const btnGerarPis = document.getElementById("btn-gerar-pis");
+    const outputPis = document.getElementById("output-pis");
+    const pisFormatadoCheck = document.getElementById("pis-formatado");
+    if (btnGerarPis && outputPis && pisFormatadoCheck) {
+      btnGerarPis.addEventListener("click", () => {
+        outputPis.className = "output-area";
+        outputPis.style.display = "block";
 
-      if (bpmnFixButton && bpmnFixInput && bpmnFixOutput && bpmnFixStatus) {
-        bpmnFixButton.addEventListener("click", async () => {
-          const brokenBpmn = bpmnFixInput.value.trim();
-          bpmnFixStatus.textContent = "";
-          bpmnFixStatus.className = "status-message";
-          
-          if (!brokenBpmn) {
-            bpmnFixStatus.textContent = "Nenhum BPMN fornecido.";
-            bpmnFixStatus.classList.add("error", "visible");
+        let pis = "";
+        for (let i = 0; i < 11; i++) {
+          pis += getRandomInt(0, 9);
+        }
+        if (pisFormatadoCheck.checked) {
+          pis = pis.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, "$1.$2.$3-$4");
+        }
+        outputPis.textContent = pis;
+      });
+    }
+
+    // CNPJ
+    const btnGerarCnpj = document.getElementById("btn-gerar-cnpj");
+    const outputCnpj = document.getElementById("output-cnpj");
+    const cnpjFormatadoCheck = document.getElementById("cnpj-formatado");
+    if (btnGerarCnpj && outputCnpj && cnpjFormatadoCheck) {
+      btnGerarCnpj.addEventListener("click", () => {
+        outputCnpj.className = "output-area";
+        outputCnpj.style.display = "block";
+
+        let cnpj = "";
+        for (let i = 0; i < 14; i++) {
+          cnpj += getRandomInt(0, 9);
+        }
+        if (cnpjFormatadoCheck.checked) {
+          cnpj = cnpj.replace(
+            /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+            "$1.$2.$3/$4-$5"
+          );
+        }
+        outputCnpj.textContent = cnpj;
+      });
+    }
+
+    // CEP
+    const btnGerarCep = document.getElementById("btn-gerar-cep");
+    const outputCep = document.getElementById("output-cep");
+    const cepFormatadoCheck = document.getElementById("cep-formatado");
+    if (btnGerarCep && outputCep && cepFormatadoCheck) {
+      btnGerarCep.addEventListener("click", () => {
+        outputCep.className = "output-area";
+        outputCep.style.display = "block";
+
+        let cep = "";
+        for (let i = 0; i < 8; i++) {
+          cep += getRandomInt(0, 9);
+        }
+        if (cepFormatadoCheck.checked) {
+          cep = cep.replace(/(\d{5})(\d{3})/, "$1-$2");
+        }
+        outputCep.textContent = cep;
+      });
+    }
+
+    // RG
+    const btnGerarRg = document.getElementById("btn-gerar-rg");
+    const outputRg = document.getElementById("output-rg");
+    const rgUfSelect = document.getElementById("rg-uf");
+    if (btnGerarRg && outputRg && rgUfSelect) {
+      btnGerarRg.addEventListener("click", () => {
+        outputRg.className = "output-area";
+        outputRg.style.display = "block";
+
+        const uf = rgUfSelect.value;
+        let rg = "";
+        const dv = getRandomInt(0, 9);
+        if (uf === "SP") {
+          for (let i = 0; i < 8; i++) rg += getRandomInt(0, 9);
+          rg = rg.replace(/(\d{2})(\d{3})(\d{3})/, `$1.$2.$3-${dv}`);
+        } else if (uf === "RJ") {
+          for (let i = 0; i < 8; i++) rg += getRandomInt(0, 9);
+          rg = `${rg}-${dv}`;
+        } else {
+          for (let i = 0; i < 9; i++) rg += getRandomInt(0, 9);
+        }
+        outputRg.textContent = rg;
+      });
+    }
+
+    // IE
+    const btnGerarIe = document.getElementById("btn-gerar-ie");
+    const outputIe = document.getElementById("output-ie");
+    const ieUfSelect = document.getElementById("ie-uf");
+    if (btnGerarIe && outputIe && ieUfSelect) {
+      btnGerarIe.addEventListener("click", () => {
+        outputIe.className = "output-area";
+        outputIe.style.display = "block";
+
+        const uf = ieUfSelect.value;
+        let ie = "";
+        if (uf === "SP") {
+          for (let i = 0; i < 12; i++) ie += getRandomInt(0, 9);
+          ie = ie.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1.$2.$3.$4");
+          outputIe.textContent = ie;
+        } else {
+          ie = "Formato não implementado para esta UF (Exemplo apenas para SP).";
+          outputIe.textContent = ie;
+          outputIe.classList.add("warning");
+        }
+      });
+    }
+
+    // Título de Eleitor
+    const btnGerarTitulo = document.getElementById("btn-gerar-titulo");
+    const outputTitulo = document.getElementById("output-titulo");
+    const tituloFormatadoCheck = document.getElementById("titulo-formatado");
+    if (btnGerarTitulo && outputTitulo && tituloFormatadoCheck) {
+      btnGerarTitulo.addEventListener("click", () => {
+        outputTitulo.className = "output-area";
+        outputTitulo.style.display = "block";
+
+        let titulo = "";
+        for (let i = 0; i < 12; i++) {
+          titulo += getRandomInt(0, 9);
+        }
+        if (tituloFormatadoCheck.checked) {
+          titulo = titulo.replace(/(\d{4})(\d{4})(\d{2})(\d{2})/, "$1 $2 $3 $4");
+        }
+        outputTitulo.textContent = titulo;
+      });
+    }
+
+    // Senha
+    const btnGerarSenha = document.getElementById("btn-gerar-senha");
+    const outputSenha = document.getElementById("output-senha");
+    if (btnGerarSenha && outputSenha) {
+      btnGerarSenha.addEventListener("click", () => {
+        outputSenha.className = "output-area";
+        outputSenha.style.display = "block";
+
+        const length = parseInt(document.getElementById("senha-length").value);
+        const includeUpper = document.getElementById("senha-upper").checked;
+        const includeLower = document.getElementById("senha-lower").checked;
+        const includeNumbers = document.getElementById("senha-numbers").checked;
+        const includeSymbols = document.getElementById("senha-symbols").checked;
+
+        if (isNaN(length) || length < 4 || length > 128) {
+          outputSenha.textContent = "Erro: Comprimento inválido (4-128).";
+          outputSenha.classList.add("error");
+          return;
+        }
+
+        const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lowerChars = "abcdefghijklmnopqrstuvwxyz";
+        const numberChars = "0123456789";
+        const symbolChars = "!@#$%&*()_+-=[]{}|;:,.<>?";
+        let charset = "";
+        let requiredChars = "";
+
+        if (includeUpper) {
+          charset += upperChars;
+          requiredChars += getRandomChar(upperChars);
+        }
+        if (includeLower) {
+          charset += lowerChars;
+          requiredChars += getRandomChar(lowerChars);
+        }
+        if (includeNumbers) {
+          charset += numberChars;
+          requiredChars += getRandomChar(numberChars);
+        }
+        if (includeSymbols) {
+          charset += symbolChars;
+          requiredChars += getRandomChar(symbolChars);
+        }
+        if (!charset) {
+          outputSenha.textContent = "Erro: Selecione ao menos um tipo de caractere.";
+          outputSenha.classList.add("error");
+          return;
+        }
+        if (requiredChars.length > length) {
+          outputSenha.textContent = "Erro: Comprimento menor que os caracteres requeridos.";
+          outputSenha.classList.add("error");
+          return;
+        }
+        let password = requiredChars;
+        const remainingLength = length - requiredChars.length;
+        for (let i = 0; i < remainingLength; i++) {
+          password += getRandomChar(charset);
+        }
+        // Embaralha
+        password = password.split("").sort(() => 0.5 - Math.random()).join("");
+        outputSenha.textContent = password;
+      });
+    }
+
+    const btnGerarPdf = document.getElementById("btn-gerar-pdf");
+    const pdfTextContent = document.getElementById("pdf-text-content");
+    const pdfBaseFilename = document.getElementById("pdf-base-filename");
+    const pdfNextCountSpan = document.getElementById("pdf-next-count");
+    let pdfFileCounter = 1;
+    if (btnGerarPdf && pdfTextContent && pdfBaseFilename && pdfNextCountSpan) {
+      pdfNextCountSpan.textContent = pdfFileCounter;
+      btnGerarPdf.addEventListener("click", () => {
+        try {
+          if (typeof jsPDF === "undefined") {
+            alert("Erro: Biblioteca jsPDF não carregada.");
             return;
           }
+          const doc = new jsPDF();
+          const text = pdfTextContent.value || "Nenhum conteúdo fornecido.";
+          const baseName = (pdfBaseFilename.value.trim() || "documento")
+            .replace(/[^a-zA-Z0-9_\-\.]/g, "_")
+            .replace(/\s+/g, "_");
+          const filename = `${baseName}_${pdfFileCounter}.pdf`;
+          const lines = doc.splitTextToSize(text, 180);
+          doc.text(lines, 10, 10);
+          doc.save(filename);
+          pdfFileCounter++;
+          pdfNextCountSpan.textContent = pdfFileCounter;
+        } catch (error) {
+          console.error("Erro ao gerar PDF:", error);
+          alert("Ocorreu um erro ao gerar o PDF: " + error.message);
+        }
+      });
+    }
 
-          try {
-            const response = await fetch("/validate-correct", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ bpmnXml: brokenBpmn })
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              bpmnFixStatus.textContent = "Falha ao corrigir: " + (errorData.error || response.statusText);
-              bpmnFixStatus.classList.add("error", "visible");
-              return;
-            }
-
-            const result = await response.json();
-            bpmnFixOutput.value = result.correctedXml || "";
-
-            if (!result.issues || result.issues.length === 0) {
-              bpmnFixStatus.textContent = "Nenhum problema detectado ou BPMN já estava válido.";
-              bpmnFixStatus.classList.add("success", "visible");
-            } else {
-              let messages = result.issues
-                .map(iss => `(${iss.type.toUpperCase()}) ${iss.message}`)
-                .join("\n");
-              bpmnFixStatus.textContent = "Correções e avisos:\n\n" + messages;
-              bpmnFixStatus.classList.add("warning", "visible");
-            }
-          } catch (err) {
-            bpmnFixStatus.textContent = "Erro de conexão ou exceção: " + err.message;
-            bpmnFixStatus.classList.add("error", "visible");
-          }
-        });
+    const anotacoesTexto = document.getElementById("anotacoes-texto");
+    const btnSalvarAnotacoes = document.getElementById("btn-salvar-anotacoes");
+    const anotacoesStatus = document.getElementById("anotacoes-status");
+    if (anotacoesTexto && btnSalvarAnotacoes && anotacoesStatus) {
+      function carregarAnotacoes() {
+        const salvas = localStorage.getItem("anotacoesUsuario");
+        if (salvas) {
+          anotacoesTexto.value = salvas;
+        }
       }
-    });
+      carregarAnotacoes();
+
+      btnSalvarAnotacoes.addEventListener("click", () => {
+        localStorage.setItem("anotacoesUsuario", anotacoesTexto.value);
+        anotacoesStatus.textContent = "Anotações salvas localmente!";
+        anotacoesStatus.className = "output-area success";
+        anotacoesStatus.style.display = "block";
+      });
+    }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+k8VWQ+0Ys8NlmvJLPSBfH0bZ+jFQKRyTRtfq6f0fN0rKcHtkR6fOm5KTJZf" crossorigin="anonymous"></script>
 </body>
 
 </html>
